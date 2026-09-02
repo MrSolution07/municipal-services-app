@@ -245,3 +245,37 @@ namespace MunicipalServicesApp.Forms
             this.lblAttachmentName.Text = "No file attached yet.";
             this.lblAttachmentName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             //
+            // layoutEngagement
+            //
+            this.layoutEngagement.ColumnCount = 1;
+            this.layoutEngagement.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.layoutEngagement.Controls.Add(this.progressReport, 0, 0);
+            this.layoutEngagement.Controls.Add(this.lblEngagement, 0, 1);
+            this.layoutEngagement.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.layoutEngagement.Margin = new System.Windows.Forms.Padding(3, 8, 3, 3);
+            this.layoutEngagement.Name = "layoutEngagement";
+            this.layoutEngagement.RowCount = 2;
+            this.layoutEngagement.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 24F));
+            this.layoutEngagement.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.layoutEngagement.Size = new System.Drawing.Size(744, 59);
+            this.layoutEngagement.TabIndex = 8;
+            //
+            // progressReport
+            //
+            this.progressReport.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.progressReport.Maximum = 100;
+            this.progressReport.Name = "progressReport";
+            this.progressReport.Size = new System.Drawing.Size(738, 18);
+            this.progressReport.Step = 1;
+            this.progressReport.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progressReport.TabIndex = 0;
+            //
+            // lblEngagement
+            //
+            this.lblEngagement.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblEngagement.Name = "lblEngagement";
+            this.lblEngagement.Size = new System.Drawing.Size(738, 29);
+            this.lblEngagement.TabIndex = 1;
+            this.lblEngagement.Text = "0% complete. Start by telling us where the problem is.";
+            this.lblEngagement.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            //
