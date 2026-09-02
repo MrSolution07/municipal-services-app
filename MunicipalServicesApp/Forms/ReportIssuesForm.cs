@@ -159,3 +159,61 @@ namespace MunicipalServicesApp.Forms
 
             return prefix + "Thank you. Adding a photo or document helps the team even more.";
         }
+
+        private void BtnAttachFile_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog.ShowDialog(this) != DialogResult.OK)
+            {
+                return;
+            }
+
+            string selectedPath = openFileDialog.FileName;
+
+            if (!File.Exists(selectedPath))
+            {
+                MessageBox.Show(
+                    this,
+                    "That file could not be found. Please choose another file.",
+                    "Attachment not found",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
+            attachmentPath = selectedPath;
+            lblAttachmentName.Text = "Attached: " + Path.GetFileName(selectedPath);
+            ShowPreview(selectedPath);
+            UpdateEngagement();
+        }
+
+        /// <summary>Shows a thumbnail for images. Documents and unreadable files simply show no preview.</summary>
+        private void ShowPreview(string path)
+        {
+            ClearPreview();
+
+            try
+            {
+                using (FileStream stream = File.OpenRead(path))
+                using (Image original = Image.FromStream(stream))
+                {
+                    picPreview.Image = new Bitmap(original);
+                    picPreview.Visible = true;
+                }
+            }
+            catch (Exception)
+            {
+                ClearPreview();
+            }
+        }
+
+        private void ClearPreview()
+        {
+            if (picPreview.Image != null)
+            {
+                Image previous = picPreview.Image;
+                picPreview.Image = null;
+                previous.Dispose();
+            }
+
+            picPreview.Visible = false;
+        }
