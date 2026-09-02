@@ -143,3 +143,33 @@ namespace MunicipalServicesApp.Forms
             this.btnServiceStatus.Text = "3.  Service Request Status  (available later)";
             this.btnServiceStatus.UseVisualStyleBackColor = true;
             //
+            // lblSessionCount
+            //
+            this.lblSessionCount.AutoSize = true;
+            this.lblSessionCount.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblSessionCount.Location = new System.Drawing.Point(27, 361);
+            this.lblSessionCount.Name = "lblSessionCount";
+            this.lblSessionCount.Size = new System.Drawing.Size(650, 32);
+            this.lblSessionCount.TabIndex = 4;
+            this.lblSessionCount.Text = "Issues reported this session: 0";
+            this.lblSessionCount.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            //
+            // MainMenuForm
+            //
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(704, 461);
+            this.Controls.Add(this.layoutBody);
+            this.Controls.Add(this.panelHeader);
+            this.MinimumSize = new System.Drawing.Size(620, 460);
+            this.Name = "MainMenuForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Municipal Services - Main Menu";
+            this.panelHeader.ResumeLayout(false);
+            this.panelHeader.PerformLayout();
+            this.layoutBody.ResumeLayout(false);
+            this.layoutBody.PerformLayout();
+            this.ResumeLayout(false);
+        }
+    }
+}
