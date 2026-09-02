@@ -104,3 +104,28 @@ Each `IssueReport` (see `Models/IssueReport.cs`) holds the location, category, d
 attachment path, reference number, and submission timestamp. The list preserves submission order,
 new reports are appended with `List.Add`, and the count is shown on the main menu.
 Storage is in memory for Part 1, so reports are cleared when the application closes.
+
+## 6. Project structure
+
+```
+MunicipalServicesApp.sln
+MunicipalServicesApp/
+    App.config
+    MunicipalServicesApp.csproj
+    Program.cs                     entry point, STAThread, starts MainMenuForm
+    Data/IssueStore.cs             List<IssueReport> storage
+    Models/IssueReport.cs          one reported issue
+    Forms/MainMenuForm.cs          main menu, two options disabled
+    Forms/ReportIssuesForm.cs      capture form, validation, attachment, progress bar
+    UI/AppTheme.cs                 shared colours and fonts
+    Properties/AssemblyInfo.cs
+```
+
+## 7. Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| "The target framework 4.8 is not installed" | Install the .NET Framework 4.8 targeting pack from the Visual Studio Installer |
+| The solution opens but nothing builds | Right-click the solution, choose **Restore**, then **Build Solution** |
+| The attach button does nothing | The file dialog was cancelled; click the button again and choose a file |
+| A chosen image shows no preview | The file is a document or is not a readable image; the file name is still attached |
