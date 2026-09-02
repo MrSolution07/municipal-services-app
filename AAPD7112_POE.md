@@ -161,3 +161,49 @@ Learning Units: LU1 – LU4. Focus: stacks, queues, priority queues, hash tables
 2. Readme with compile, run, and usage instructions.
 
 ---
+
+# POE Part 3 — Full Functioning App — 100 marks
+
+Learning Units: all. Focus: basic trees, binary trees, binary search trees, AVL trees, red-black trees, heaps, graphs, graph traversal, minimum spanning trees.
+
+## Implementation (100 marks)
+
+**a.** Windows Form menu for Report Issues (Part 1), Local Events and Announcements (Part 2), Service Request Status (this task).
+
+**b. Service Request Status Page (Windows Form) — 100 marks:**
+
+- Display a well-organised list of submitted service requests including status.
+- Allow users to track progress using unique identifiers.
+- Use advanced data structures such as graphs, binary search trees, or heaps to manage and display service request information efficiently.
+
+### Technical requirements (50 marks)
+
+| Requirement | Marks |
+|---|---|
+| Basic trees, binary trees, BSTs, AVL trees, red-black trees | 20 |
+| Heaps, graphs, graph traversal, minimum spanning tree | 30 |
+
+### Implementation report (20 marks)
+
+- Detailed readme explaining how to compile, run, and use the programme.
+- For each implemented data structure, an in-depth explanation of its role and contribution to the efficiency of the "Service Request Status" feature, with relevant examples.
+
+### Project completion report (20 marks)
+
+- Comprehensive report on the completion of the entire project.
+- Challenges faced during Task 3 and how they were overcome.
+- Key learnings: new skills, problem-solving approaches, programming techniques.
+
+### Technology recommendations (10 marks)
+
+- Suggest additional technologies or tools that could enhance functionality or performance.
+- Justify recommendations based on potential benefits and compatibility with the project.
+
+### Submit for Part 3
+
+1. A Word document containing the report.
+2. Source code with the complete functioning application.
+3. The readme file.
+4. A file listing the updates made based on lecturer feedback.
+
+---
