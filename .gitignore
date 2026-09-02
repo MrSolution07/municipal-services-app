@@ -1,0 +1,23 @@
+# Visual Studio / MSBuild
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+*.nupkg
+*.pdb
+*.cache
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Brief PDF is IIE copyrighted — keep local, do not push
+AAPD7112_POE.pdf
