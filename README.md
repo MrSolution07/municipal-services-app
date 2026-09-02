@@ -31,3 +31,10 @@ under **Individual components → .NET Framework 4.8 SDK / targeting pack**.
 3. Make sure the configuration is **Debug** and the platform is **Any CPU**.
 4. Choose **Build → Build Solution** (`Ctrl+Shift+B`).
    The build output appears in `MunicipalServicesApp\bin\Debug\MunicipalServicesApp.exe`.
+
+## 3. How to run
+
+- From Visual Studio: press **F5** (with debugging) or **Ctrl+F5** (without debugging).
+- Or run `MunicipalServicesApp\bin\Debug\MunicipalServicesApp.exe` directly after building.
+
+The application starts on the **Main Menu**.
