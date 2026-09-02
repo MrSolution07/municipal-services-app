@@ -192,3 +192,56 @@ namespace MunicipalServicesApp.Forms
             this.rtbDescription.Text = "";
             this.rtbDescription.TextChanged += new System.EventHandler(this.ReportInput_Changed);
             //
+            // lblAttachment
+            //
+            this.lblAttachment.AutoSize = true;
+            this.lblAttachment.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblAttachment.Name = "lblAttachment";
+            this.lblAttachment.Size = new System.Drawing.Size(174, 96);
+            this.lblAttachment.TabIndex = 6;
+            this.lblAttachment.Text = "Photo or document (optional)";
+            this.lblAttachment.TextAlign = System.Drawing.ContentAlignment.TopLeft;
+            //
+            // panelAttachment
+            //
+            this.panelAttachment.Controls.Add(this.lblAttachmentName);
+            this.panelAttachment.Controls.Add(this.btnAttachFile);
+            this.panelAttachment.Controls.Add(this.picPreview);
+            this.panelAttachment.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelAttachment.Margin = new System.Windows.Forms.Padding(3, 7, 3, 7);
+            this.panelAttachment.Name = "panelAttachment";
+            this.panelAttachment.Size = new System.Drawing.Size(575, 82);
+            this.panelAttachment.TabIndex = 7;
+            //
+            // picPreview
+            //
+            this.picPreview.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.picPreview.Dock = System.Windows.Forms.DockStyle.Right;
+            this.picPreview.Name = "picPreview";
+            this.picPreview.Size = new System.Drawing.Size(120, 82);
+            this.picPreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.picPreview.TabIndex = 2;
+            this.picPreview.TabStop = false;
+            this.picPreview.Visible = false;
+            //
+            // btnAttachFile
+            //
+            this.btnAttachFile.Dock = System.Windows.Forms.DockStyle.Left;
+            this.btnAttachFile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnAttachFile.Name = "btnAttachFile";
+            this.btnAttachFile.Size = new System.Drawing.Size(190, 82);
+            this.btnAttachFile.TabIndex = 0;
+            this.btnAttachFile.Text = "Attach image or document";
+            this.btnAttachFile.UseVisualStyleBackColor = true;
+            this.btnAttachFile.Click += new System.EventHandler(this.BtnAttachFile_Click);
+            //
+            // lblAttachmentName
+            //
+            this.lblAttachmentName.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblAttachmentName.Name = "lblAttachmentName";
+            this.lblAttachmentName.Padding = new System.Windows.Forms.Padding(12, 0, 12, 0);
+            this.lblAttachmentName.Size = new System.Drawing.Size(265, 82);
+            this.lblAttachmentName.TabIndex = 1;
+            this.lblAttachmentName.Text = "No file attached yet.";
+            this.lblAttachmentName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            //
