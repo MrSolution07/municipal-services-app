@@ -79,3 +79,20 @@ Steps:
 
 If a required field is empty, the application shows a warning message box and places the cursor
 in the field that still needs attention. Nothing is saved until every required field is filled in.
+
+### 4.3 The engagement feature (progress bar and message)
+
+The progress bar and the message underneath it are the implemented user engagement strategy:
+**progressive completion**. The resident always sees how complete the report is and what to do next.
+
+| Part of the report | Contribution |
+|---|---|
+| Location entered | 25% |
+| Category selected | 25% |
+| Description entered (at least 20 characters gives the full weight, shorter gives half) | 30% |
+| File attached | 20% |
+
+The message under the bar changes with progress, for example
+"Good start. Now choose the category so we send this to the right department."
+When the report reaches 100% the message invites the resident to press Submit.
+After a successful submission the bar shows 100%, then resets to 0% for the next report.
