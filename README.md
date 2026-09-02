@@ -38,3 +38,17 @@ under **Individual components → .NET Framework 4.8 SDK / targeting pack**.
 - Or run `MunicipalServicesApp\bin\Debug\MunicipalServicesApp.exe` directly after building.
 
 The application starts on the **Main Menu**.
+
+## 4. How to use the programme
+
+### 4.1 Main menu
+
+The main menu opens on startup and offers the three municipal tasks:
+
+1. **Report Issues** — enabled.
+2. **Local Events and Announcements** — disabled, added in Part 2.
+3. **Service Request Status** — disabled, added in Part 3.
+
+Hovering over a disabled button shows a tooltip explaining when the feature arrives.
+The bottom of the menu shows **Issues reported this session**, which is the number of reports
+currently held in the application's list.
