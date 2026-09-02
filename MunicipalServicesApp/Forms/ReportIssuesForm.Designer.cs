@@ -172,3 +172,23 @@ namespace MunicipalServicesApp.Forms
             this.cboCategory.TabIndex = 3;
             this.cboCategory.SelectedIndexChanged += new System.EventHandler(this.ReportInput_Changed);
             //
+            // lblDescription
+            //
+            this.lblDescription.AutoSize = true;
+            this.lblDescription.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblDescription.Name = "lblDescription";
+            this.lblDescription.Size = new System.Drawing.Size(174, 100);
+            this.lblDescription.TabIndex = 4;
+            this.lblDescription.Text = "Description of the issue *";
+            this.lblDescription.TextAlign = System.Drawing.ContentAlignment.TopLeft;
+            //
+            // rtbDescription
+            //
+            this.rtbDescription.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rtbDescription.Margin = new System.Windows.Forms.Padding(3, 7, 3, 7);
+            this.rtbDescription.Name = "rtbDescription";
+            this.rtbDescription.Size = new System.Drawing.Size(575, 100);
+            this.rtbDescription.TabIndex = 5;
+            this.rtbDescription.Text = "";
+            this.rtbDescription.TextChanged += new System.EventHandler(this.ReportInput_Changed);
+            //
