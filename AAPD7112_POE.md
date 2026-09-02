@@ -47,3 +47,80 @@ A South African municipality wants to improve citizen engagement and service del
 Ensure the application is fully functional and meets all outlined specifications. Aim for a user-centric experience that adds value to citizens.
 
 ---
+
+# Part 1 — Municipal Services Application (Report Issues) — 100 marks
+
+Learning Units: LU1 – LU2. Two tasks: Research (20) and Implementation (80).
+
+## Task 1: Research (20 marks)
+
+Conduct online research on user engagement strategies suitable for a municipal services application, especially in the South African context. Starting article:
+
+> Hart, Tim G. B., et al. "Innovation for Development in South Africa: Experiences with Basic Service Technologies in Distressed Municipalities." Forum for Development Studies, vol. 47, no. 1, 20 Aug. 2019, pp. 23–47. [Accessed 20 February 2025]
+
+In a Word document:
+
+- List five user engagement strategies considered during the research.
+- Provide a 500-word explanation of the chosen user engagement strategy and justify why it was selected.
+- Line spacing 1.5. Font Times New Roman or Arial, 11 or 12 pt.
+- Reference the sources used.
+
+**Note:** If the explanation exceeds 500 words, any content beyond this point will not be marked.
+
+## Task 2: Implementation (.NET Framework Windows Application) — 80 marks
+
+### Requirements
+
+1. On startup, present the user with three tasks:
+   a. Report Issues (to be implemented).
+   b. Local Events and Announcements (to be implemented later).
+   c. Service Request Status (to be implemented later).
+2. Only "Report Issues" is implemented initially; **disable the other two options**.
+3. On selecting "Report Issues," prompt users for details about the issue, including location and category.
+4. Users must be able to attach images or documents related to the issue.
+5. Implement the chosen user engagement strategy to encourage active participation.
+
+### Technical requirements
+
+- Use appropriate data structures to store user-reported issues and relevant details.
+- Create a readme file explaining how to compile, run, and use the programme.
+
+### User interface specifications
+
+**1. Main Menu (Form)** — presented on startup with the three options above.
+
+**2. Report Issues Page (Windows Form)** — a new Windows Form containing:
+
+| Element | Control |
+|---|---|
+| a. Location input | TextBox |
+| b. Category selection | Dropdown or ListBox (e.g. sanitation, roads, utilities) |
+| c. Description box | RichTextBox |
+| d. Media attachment | Button with OpenFileDialog (images or documents) |
+| e. Submit | Button clearly labelled "Submit" |
+| f. Engagement feature | Label with encouraging messages or ProgressBar showing reporting progress |
+| g. Navigation | Button(s), e.g. "Back to Main Menu" |
+
+### Design considerations
+
+1. **Consistency** — consistent colour scheme and layout throughout.
+2. **Clarity** — labels, buttons, and instructions clear for a diverse user base.
+3. **User feedback** — MessageBox success messages and error alerts.
+4. **Responsiveness** — interface accommodates various screen sizes and resolutions.
+
+### Additional requirements
+
+1. **Form interactions (event handling)** — event handlers for button clicks and user interactions.
+2. **Data handling (data structures)** — appropriate data structures (e.g. a list for storing issues) to manage and organise reported issues.
+
+**Note:** If the code does not compile and run, no marks are awarded for any application functionality.
+
+### Submit for Part 1
+
+1. A Word document containing the research.
+2. Source code for the application.
+3. The readme file with instructions for how to compile, run, and use the software.
+
+Keep a copy of the code — Part 2 and the POE build on this application.
+
+---
