@@ -19,3 +19,15 @@ namespace MunicipalServicesApp.Models
         public string AttachmentPath { get; set; }
 
         public DateTime SubmittedAt { get; set; }
+
+        public bool HasAttachment
+        {
+            get { return !string.IsNullOrEmpty(AttachmentPath); }
+        }
+
+        public override string ToString()
+        {
+            return ReferenceNumber + " - " + Category + " - " + Location;
+        }
+    }
+}
