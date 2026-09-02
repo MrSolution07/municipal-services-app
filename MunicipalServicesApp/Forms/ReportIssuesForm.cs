@@ -217,3 +217,65 @@ namespace MunicipalServicesApp.Forms
 
             picPreview.Visible = false;
         }
+
+        private void BtnSubmit_Click(object sender, EventArgs e)
+        {
+            if (!IsReportValid())
+            {
+                return;
+            }
+
+            IssueReport report = new IssueReport
+            {
+                Location = txtLocation.Text.Trim(),
+                Category = cboCategory.SelectedItem.ToString(),
+                Description = rtbDescription.Text.Trim(),
+                AttachmentPath = attachmentPath
+            };
+
+            string reference = IssueStore.Add(report);
+
+            progressReport.Value = 100;
+            lblEngagement.Text = "100% complete. Report submitted - thank you for helping your municipality.";
+
+            MessageBox.Show(
+                this,
+                "Thank you. Your issue has been submitted." + Environment.NewLine + Environment.NewLine +
+                "Reference number: " + reference + Environment.NewLine +
+                "Category: " + report.Category + Environment.NewLine +
+                "Reports captured this session: " + IssueStore.Count,
+                "Report submitted",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+
+            ResetForm();
+        }
+
+        private bool IsReportValid()
+        {
+            if (string.IsNullOrWhiteSpace(txtLocation.Text))
+            {
+                ShowValidationError("Please enter the location of the issue.", txtLocation);
+                return false;
+            }
+
+            if (cboCategory.SelectedIndex < 0)
+            {
+                ShowValidationError("Please select the category of the issue.", cboCategory);
+                return false;
+            }
+
+            if (rtbDescription.Text.Trim().Length == 0)
+            {
+                ShowValidationError("Please describe the issue so the municipality knows what to fix.", rtbDescription);
+                return false;
+            }
+
+            return true;
+        }
+
+        private void ShowValidationError(string message, Control controlToFocus)
+        {
+            MessageBox.Show(this, message, "Information still needed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            controlToFocus.Focus();
+        }
