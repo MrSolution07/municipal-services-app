@@ -279,3 +279,64 @@ namespace MunicipalServicesApp.Forms
             this.lblEngagement.Text = "0% complete. Start by telling us where the problem is.";
             this.lblEngagement.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             //
+            // panelButtons
+            //
+            this.panelButtons.Controls.Add(this.btnBackToMenu);
+            this.panelButtons.Controls.Add(this.btnSubmit);
+            this.panelButtons.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelButtons.Name = "panelButtons";
+            this.panelButtons.Size = new System.Drawing.Size(744, 50);
+            this.panelButtons.TabIndex = 9;
+            //
+            // btnBackToMenu
+            //
+            this.btnBackToMenu.Dock = System.Windows.Forms.DockStyle.Left;
+            this.btnBackToMenu.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnBackToMenu.Name = "btnBackToMenu";
+            this.btnBackToMenu.Size = new System.Drawing.Size(190, 50);
+            this.btnBackToMenu.TabIndex = 0;
+            this.btnBackToMenu.Text = "Back to Main Menu";
+            this.btnBackToMenu.UseVisualStyleBackColor = true;
+            this.btnBackToMenu.Click += new System.EventHandler(this.BtnBackToMenu_Click);
+            //
+            // btnSubmit
+            //
+            this.btnSubmit.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btnSubmit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSubmit.Name = "btnSubmit";
+            this.btnSubmit.Size = new System.Drawing.Size(190, 50);
+            this.btnSubmit.TabIndex = 1;
+            this.btnSubmit.Text = "Submit";
+            this.btnSubmit.UseVisualStyleBackColor = true;
+            this.btnSubmit.Click += new System.EventHandler(this.BtnSubmit_Click);
+            //
+            // openFileDialog
+            //
+            this.openFileDialog.Filter = "Images and documents|*.jpg;*.jpeg;*.png;*.bmp;*.gif;*.pdf;*.doc;*.docx;*.txt|Imag" +
+    "es|*.jpg;*.jpeg;*.png;*.bmp;*.gif|Documents|*.pdf;*.doc;*.docx;*.txt|All files|*" +
+    ".*";
+            this.openFileDialog.Title = "Attach an image or document";
+            //
+            // ReportIssuesForm
+            //
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(784, 561);
+            this.Controls.Add(this.layoutBody);
+            this.Controls.Add(this.panelHeader);
+            this.MinimumSize = new System.Drawing.Size(700, 600);
+            this.Name = "ReportIssuesForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "Municipal Services - Report Issues";
+            this.panelHeader.ResumeLayout(false);
+            this.panelHeader.PerformLayout();
+            this.layoutBody.ResumeLayout(false);
+            this.layoutBody.PerformLayout();
+            this.panelAttachment.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picPreview)).EndInit();
+            this.layoutEngagement.ResumeLayout(false);
+            this.panelButtons.ResumeLayout(false);
+            this.ResumeLayout(false);
+        }
+    }
+}
