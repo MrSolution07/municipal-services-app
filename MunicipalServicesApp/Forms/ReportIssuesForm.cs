@@ -89,3 +89,73 @@ namespace MunicipalServicesApp.Forms
         }
 
         /// <summary>Recalculates the progress bar whenever the resident changes any input.</summary>
+        private void ReportInput_Changed(object sender, EventArgs e)
+        {
+            UpdateEngagement();
+        }
+
+        private void UpdateEngagement()
+        {
+            int progress = CalculateProgress();
+            progressReport.Value = progress;
+            lblEngagement.Text = BuildEngagementMessage(progress);
+        }
+
+        private int CalculateProgress()
+        {
+            int progress = 0;
+
+            if (!string.IsNullOrWhiteSpace(txtLocation.Text))
+            {
+                progress += LocationWeight;
+            }
+
+            if (cboCategory.SelectedIndex >= 0)
+            {
+                progress += CategoryWeight;
+            }
+
+            string description = rtbDescription.Text.Trim();
+            if (description.Length >= DetailedDescriptionLength)
+            {
+                progress += DescriptionWeight;
+            }
+            else if (description.Length > 0)
+            {
+                progress += DescriptionWeight / 2;
+            }
+
+            if (!string.IsNullOrEmpty(attachmentPath))
+            {
+                progress += AttachmentWeight;
+            }
+
+            return progress > 100 ? 100 : progress;
+        }
+
+        private string BuildEngagementMessage(int progress)
+        {
+            string prefix = progress + "% complete. ";
+
+            if (progress >= 100)
+            {
+                return prefix + "Your report is complete. Press Submit to send it to the municipality.";
+            }
+
+            if (string.IsNullOrWhiteSpace(txtLocation.Text))
+            {
+                return prefix + "Start by telling us where the problem is, so the team can find it.";
+            }
+
+            if (cboCategory.SelectedIndex < 0)
+            {
+                return prefix + "Good start. Now choose the category so we send this to the right department.";
+            }
+
+            if (rtbDescription.Text.Trim().Length < DetailedDescriptionLength)
+            {
+                return prefix + "Almost there. Add a little more detail about what you can see.";
+            }
+
+            return prefix + "Thank you. Adding a photo or document helps the team even more.";
+        }
