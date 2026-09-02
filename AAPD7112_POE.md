@@ -124,3 +124,40 @@ In a Word document:
 Keep a copy of the code — Part 2 and the POE build on this application.
 
 ---
+
+# Part 2 — Municipal Services Application (Collaboration) — 100 marks
+
+Learning Units: LU1 – LU4. Focus: stacks, queues, priority queues, hash tables, dictionaries, sorted dictionaries, sets, plus a recommendation feature based on user searches.
+
+## Task 1: Implementation (100 marks)
+
+**a. Main Menu (Form) — 30 marks.** Windows Form with an organised menu: Report Issues (Part 1), Local Events and Announcements (this part), Service Request Status (Task 3).
+
+**b. Local Events and Announcements Page (Windows Form) — 70 marks.**
+
+- Display upcoming local events and announcements attractively.
+- Search functionality to find events by category and date.
+- Advanced data structures, such as sorted dictionaries, to optimise event organisation.
+
+### Technical requirements (40 of the 70)
+
+| Requirement | Marks |
+|---|---|
+| Stacks, queues, priority queues — manage event-related data | 15 |
+| Hash tables, dictionaries, sorted dictionaries — organise and retrieve event info | 15 |
+| Sets — handle unique categories or dates | 10 |
+
+### Additional recommendation feature (30 marks)
+
+- Analyse user search patterns and preferences.
+- Use an appropriate algorithm or data structure to suggest related or recommended events.
+- Present recommendations in a user-friendly manner in the application.
+
+**Note:** If the code does not compile and run, no marks are awarded for application functionality.
+
+### Submit for Part 2
+
+1. Source code.
+2. Readme with compile, run, and usage instructions.
+
+---
