@@ -66,3 +66,15 @@ namespace MunicipalServicesApp.Forms
         {
             lblSessionCount.Text = "Issues reported this session: " + IssueStore.Count;
         }
+
+        private void BtnReportIssues_Click(object sender, EventArgs e)
+        {
+            using (ReportIssuesForm reportForm = new ReportIssuesForm())
+            {
+                reportForm.ShowDialog(this);
+            }
+
+            UpdateSessionCount();
+        }
+    }
+}
