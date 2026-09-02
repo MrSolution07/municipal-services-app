@@ -104,3 +104,42 @@ namespace MunicipalServicesApp.Forms
             this.lblChoose.Text = "Select one of the three municipal services below.";
             this.lblChoose.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             //
+            // btnReportIssues
+            //
+            this.btnReportIssues.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnReportIssues.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnReportIssues.Location = new System.Drawing.Point(27, 61);
+            this.btnReportIssues.Margin = new System.Windows.Forms.Padding(3, 6, 3, 6);
+            this.btnReportIssues.Name = "btnReportIssues";
+            this.btnReportIssues.Size = new System.Drawing.Size(650, 88);
+            this.btnReportIssues.TabIndex = 1;
+            this.btnReportIssues.Text = "1.  Report Issues";
+            this.btnReportIssues.UseVisualStyleBackColor = true;
+            this.btnReportIssues.Click += new System.EventHandler(this.BtnReportIssues_Click);
+            //
+            // btnLocalEvents
+            //
+            this.btnLocalEvents.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnLocalEvents.Enabled = false;
+            this.btnLocalEvents.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnLocalEvents.Location = new System.Drawing.Point(27, 161);
+            this.btnLocalEvents.Margin = new System.Windows.Forms.Padding(3, 6, 3, 6);
+            this.btnLocalEvents.Name = "btnLocalEvents";
+            this.btnLocalEvents.Size = new System.Drawing.Size(650, 88);
+            this.btnLocalEvents.TabIndex = 2;
+            this.btnLocalEvents.Text = "2.  Local Events and Announcements  (available later)";
+            this.btnLocalEvents.UseVisualStyleBackColor = true;
+            //
+            // btnServiceStatus
+            //
+            this.btnServiceStatus.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnServiceStatus.Enabled = false;
+            this.btnServiceStatus.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnServiceStatus.Location = new System.Drawing.Point(27, 261);
+            this.btnServiceStatus.Margin = new System.Windows.Forms.Padding(3, 6, 3, 6);
+            this.btnServiceStatus.Name = "btnServiceStatus";
+            this.btnServiceStatus.Size = new System.Drawing.Size(650, 88);
+            this.btnServiceStatus.TabIndex = 3;
+            this.btnServiceStatus.Text = "3.  Service Request Status  (available later)";
+            this.btnServiceStatus.UseVisualStyleBackColor = true;
+            //
