@@ -62,3 +62,7 @@ namespace MunicipalServicesApp.Forms
         }
 
         /// <summary>Shows how many reports the List currently holds for this session.</summary>
+        private void UpdateSessionCount()
+        {
+            lblSessionCount.Text = "Issues reported this session: " + IssueStore.Count;
+        }
