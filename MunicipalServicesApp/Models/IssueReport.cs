@@ -12,3 +12,10 @@ namespace MunicipalServicesApp.Models
         public string Location { get; set; }
 
         public string Category { get; set; }
+
+        public string Description { get; set; }
+
+        /// <summary>Full path of the attached image or document. Empty when nothing was attached.</summary>
+        public string AttachmentPath { get; set; }
+
+        public DateTime SubmittedAt { get; set; }
