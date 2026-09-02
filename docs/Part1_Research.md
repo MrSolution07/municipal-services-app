@@ -32,3 +32,15 @@ Third, the strategy fits the South African municipal context described in the li
 Alternatives were rejected on practical grounds. Points and badges require accounts, moderation, and an incentive budget that a distressed municipality is unlikely to sustain. Community activity feeds require data the application does not yet hold. Progressive completion needs no additional infrastructure, works entirely inside the existing Windows Form, and produces a measurable benefit for the municipality: reports that contain a location, a category, a description, and often supporting media, which is precisely the information a repair crew needs before it can be dispatched.
 
 ---
+
+## References
+
+[1] T. G. B. Hart, I. Booyens, and S. Sinyolo, "Innovation for development in South Africa: experiences with basic service technologies in distressed municipalities," *Forum for Development Studies*, vol. 47, no. 1, pp. 23–47, 2020, doi: 10.1080/08039410.2019.1654543.
+
+[2] N. Mahwai, S. Dlamini, M. Herselman, C. Phiri, and I. Meyer, "A scoping review for proposing an eParticipation framework for South African local municipalities," in *IST-Africa 2023 Conference Proceedings*, IST-Africa Institute and IIMC, 2023, doi: 10.23919/IST-Africa60249.2023.10187880.
+
+[3] O. Ayodele, P. Plantinga, D. Sanchez-Bentacourt, S. Dlamini, and N. Dlamini, "How do researchers and public officials co-navigate e-participation implementation? An action-research experience with South African municipalities," *Systems*, vol. 13, no. 2, Art. no. 125, 2025, doi: 10.3390/systems13020125.
+
+[4] J. C. Nunes and X. Drèze, "The endowed progress effect: How artificial advancement increases effort," *Journal of Consumer Research*, vol. 32, no. 4, pp. 504–512, Mar. 2006, doi: 10.1086/500480.
+
+[5] W3C, "Making content usable for people with cognitive and learning disabilities," W3C Working Group Note, 29 Apr. 2021. [Online]. Available: https://www.w3.org/TR/2021/NOTE-coga-usable-20210429/. [Accessed: 2 Sep. 2026].
