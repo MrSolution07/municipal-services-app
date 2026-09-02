@@ -52,3 +52,30 @@ The main menu opens on startup and offers the three municipal tasks:
 Hovering over a disabled button shows a tooltip explaining when the feature arrives.
 The bottom of the menu shows **Issues reported this session**, which is the number of reports
 currently held in the application's list.
+
+### 4.2 Reporting an issue
+
+Click **Report Issues**. The report window contains:
+
+| Field | Control | Required |
+|---|---|---|
+| Location of the issue | TextBox | Yes |
+| Category of the issue | Dropdown (sanitation, roads, water, electricity, stormwater, parks, other) | Yes |
+| Description of the issue | RichTextBox | Yes |
+| Photo or document | Attach button with a file dialog | No |
+
+Steps:
+
+1. Type the location, for example `14 Church Street, Bellville`.
+2. Choose the category that matches the problem.
+3. Describe what you can see in the description box.
+4. Optionally click **Attach image or document**, choose a file, and confirm.
+   Images (`.jpg`, `.jpeg`, `.png`, `.bmp`, `.gif`) show a small preview.
+   Documents (`.pdf`, `.doc`, `.docx`, `.txt`) show the file name only.
+   Cancelling the dialog changes nothing.
+5. Click **Submit**. A message box confirms the submission and shows the reference number,
+   for example `MSA-20260902-001`. The form then clears itself, ready for the next report.
+6. Click **Back to Main Menu** at any time to return to the menu.
+
+If a required field is empty, the application shows a warning message box and places the cursor
+in the field that still needs attention. Nothing is saved until every required field is filled in.
