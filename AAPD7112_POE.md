@@ -207,3 +207,58 @@ Learning Units: all. Focus: basic trees, binary trees, binary search trees, AVL 
 4. A file listing the updates made based on lecturer feedback.
 
 ---
+
+# Appendix A — Marking rubrics
+
+Rubric band labels throughout: *does not meet the required standard / meets the required standard / partially exceeds the required standard / greatly exceeds the required standard*.
+
+## Part 1 — Task 1 (Research)
+
+| Criterion | Marks | Top band requires |
+|---|---|---|
+| Research: list of five user engagement strategies | 5 | Five well-defined strategies relevant to municipal services applications (0 / 1–2 / 3–4 / 5) |
+| Research: explanation and justification of the chosen strategy | 10 | Comprehensive 500-word explanation, clear justification, deep understanding of benefits for municipal services (0–3 / 4–6 / 7–8 / 9–10) |
+| Referencing and citations | 5 | Proper referencing and citations using the given article and other relevant sources (0 / 1–2 / 3–4 / 5) |
+
+## Part 1 — Task 2 (Implementation)
+
+| Criterion | Marks | Top band requires |
+|---|---|---|
+| App functionality: task presentation on startup | 10 | Main menu presented flawlessly on startup, all options working without errors (0–3 / 4–6 / 7–8 / 9–10) |
+| App functionality: Report Issues task implementation | 10 | Fully implemented, meeting all requirements without errors (0–3 / 4–6 / 7–8 / 9–10) |
+| App functionality: user input for issue details | 10 | Works perfectly without errors (0–3 / 4–6 / 7–8 / 9–10) |
+| App functionality: media attachment | 10 | Works flawlessly without errors (0–3 / 4–6 / 7–8 / 9–10) |
+| App functionality: implementation of user engagement strategy | 10 | Seamlessly integrated, positively influencing user participation (0–3 / 4–6 / 7–8 / 9–10) |
+| App logic: use of appropriate data structures | 5 | A **list** used consistently and appropriately throughout to store user-reported issues (0 / 1–2 / 3–4 / 5) |
+| Coding standards: readme file quality | 5 | Excellent readme with all information for compiling, running, and using the software (0 / 1–2 / 3–4 / 5) |
+| Design considerations: consistency, clarity, user feedback, responsiveness | 10 | Consistent colour scheme and layout; clear labels, buttons, instructions; effective feedback; responsive across screen sizes (0–3 / 4–6 / 7–8 / 9–10) |
+| Additional requirements: form interactions and data handling | 10 | Event handlers implemented seamlessly; appropriate data structures (e.g. List) used efficiently (0–3 / 4–6 / 7–8 / 9–10) |
+| **Part 1 total** | **/100** | |
+
+## Part 2 — Task 1
+
+| Criterion | Marks | Bands |
+|---|---|---|
+| Main Menu (Form) | 30 | 0–8 / 9–16 / 17–20 / 21–30 |
+| Technical: stacks, queues, priority queues | 15 | 0–4 / 5–10 / 11–14 / 15 |
+| Technical: hash tables, dictionaries, sorted dictionaries | 15 | 0–4 / 5–10 / 11–14 / 15 |
+| Technical: sets | 10 | 0–3 / 4–6 / 7–8 / 9–10 |
+| Additional: search patterns, smart recommendations | 30 | 0–9 / 10–15 / 16–20 / 21–30 |
+| **Part 2 total** | **/100** | |
+
+## POE Part 3 — Task 1
+
+| Criterion | Marks | Bands |
+|---|---|---|
+| Basic trees, binary trees, BSTs, AVL trees, red-black trees: implementation effectiveness | 20 | 0–5 / 6–10 / 11–15 / 16–20 |
+| Heaps, graphs, graph traversal, minimum spanning tree: structures utilisation | 30 | 0–9 / 10–15 / 16–20 / 21–30 |
+| Implementation report: readme file quality | 10 | 0–3 / 4–6 / 7–8 / 9–10 |
+| Implementation report: data structure explanation | 10 | 0–3 / 4–6 / 7–8 / 9–10 |
+| Project completion report: project overview | 10 (bands printed to 30) | 0–10 / 11–20 / 21–26 / 27–30 |
+| Project completion report: key learnings | 5 | 0 / 1–2 / 3–4 / 5 |
+| Technology recommendations: suggestions | 5 | 0 / 1–2 / 3–4 / 5 |
+| Technology recommendations: justification | 5 | 0 / 1–2 / 3–4 / 5 |
+| Updates based on feedback: incorporation of feedback | 5 (bands printed to 10) | 0–3 / 4–6 / 7–8 / 9–10 |
+| **Total** | **/100** | |
+
+Note: the printed rubric for Part 3 shows mark-band ranges that exceed some stated criterion weights (project overview and feedback rows). Bands are reproduced above as printed in the brief.
