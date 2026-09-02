@@ -279,3 +279,28 @@ namespace MunicipalServicesApp.Forms
             MessageBox.Show(this, message, "Information still needed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             controlToFocus.Focus();
         }
+
+        private void ResetForm()
+        {
+            txtLocation.Clear();
+            cboCategory.SelectedIndex = -1;
+            rtbDescription.Clear();
+            attachmentPath = string.Empty;
+            lblAttachmentName.Text = "No file attached yet.";
+            ClearPreview();
+            UpdateEngagement();
+            txtLocation.Focus();
+        }
+
+        private void BtnBackToMenu_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            ClearPreview();
+            base.OnFormClosed(e);
+        }
+    }
+}
