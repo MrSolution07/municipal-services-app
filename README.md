@@ -96,3 +96,11 @@ The message under the bar changes with progress, for example
 "Good start. Now choose the category so we send this to the right department."
 When the report reaches 100% the message invites the resident to press Submit.
 After a successful submission the bar shows 100%, then resets to 0% for the next report.
+
+## 5. Data structure used
+
+Reported issues are stored in a `List<IssueReport>` inside `Data/IssueStore.cs`.
+Each `IssueReport` (see `Models/IssueReport.cs`) holds the location, category, description,
+attachment path, reference number, and submission timestamp. The list preserves submission order,
+new reports are appended with `List.Add`, and the count is shown on the main menu.
+Storage is in memory for Part 1, so reports are cleared when the application closes.
