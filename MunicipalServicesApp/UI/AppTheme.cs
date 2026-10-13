@@ -19,6 +19,8 @@ namespace MunicipalServicesApp.UI
         public static readonly Color BodyText = Color.FromArgb(2, 6, 23);          // #020617
         public static readonly Color MutedText = Color.FromArgb(71, 85, 105);      // #475569
         public static readonly Color Border = Color.FromArgb(226, 232, 240);       // #E2E8F0
+        public static readonly Color CardBorder = Color.FromArgb(203, 213, 225);    // #CBD5E1
+        public static readonly Color CardHover = Color.FromArgb(240, 249, 255);     // #F0F9FF
         public static readonly Color Disabled = Color.FromArgb(222, 226, 232);
         public static readonly Color Danger = Color.FromArgb(220, 38, 38);         // #DC2626
 

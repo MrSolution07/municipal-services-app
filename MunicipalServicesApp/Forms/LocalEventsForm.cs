@@ -90,6 +90,13 @@ namespace MunicipalServicesApp.Forms
             StyleSecondary(btnBack);
 
             panelDetail.BackColor = AppTheme.Card;
+            panelDetail.Paint += (s, e) =>
+            {
+                using (Pen pen = new Pen(AppTheme.CardBorder))
+                {
+                    e.Graphics.DrawRectangle(pen, 0, 0, panelDetail.Width - 1, panelDetail.Height - 1);
+                }
+            };
             txtDetailTitle.Font = AppTheme.SectionFont;
             txtDetailTitle.ForeColor = AppTheme.BodyText;
             txtDetailBody.Font = AppTheme.BodyFont;
@@ -169,7 +176,7 @@ namespace MunicipalServicesApp.Forms
             foreach (LocalEvent item in EventCatalogue.GetFeatured(3))
             {
                 LocalEvent captured = item;
-                Panel card = BuildCard(292, 94, () => SelectEvent(captured.Id, true),
+                Panel card = BuildCard(292, 90, () => SelectEvent(captured.Id, true),
                     CreateLine("#" + rank + " featured  \u2022  priority " + item.Priority, AppTheme.Accent, AppTheme.SmallFont, 18),
                     CreateLine(item.Title, AppTheme.BodyText, AppTheme.SectionFont, 24),
                     CreateLine(item.DisplayDate, AppTheme.MutedText, AppTheme.BodyFont, 22));
@@ -191,7 +198,7 @@ namespace MunicipalServicesApp.Forms
                 currentResults.Add(captured);
 
                 string kind = captured.IsAnnouncement ? "Announcement" : "Event";
-                Panel card = BuildCard(300, 96, () => SelectEvent(captured.Id, true),
+                Panel card = BuildCard(300, 92, () => SelectEvent(captured.Id, true),
                     CreateLine(captured.Title, AppTheme.BodyText, AppTheme.SectionFont, 24),
                     CreateLine(kind + "  \u2022  " + captured.Category, AppTheme.Accent, AppTheme.SmallFont, 18),
                     CreateLine(captured.DisplayDate, AppTheme.MutedText, AppTheme.BodyFont, 22));
@@ -221,11 +228,10 @@ namespace MunicipalServicesApp.Forms
             foreach (LocalEvent item in EventCatalogue.GetAnnouncements())
             {
                 LocalEvent captured = item;
-                string place = position == 1 ? "Next to read" : "Waiting #" + position;
-                Panel card = BuildCard(300, 72, () => SelectEvent(captured.Id, false),
-                    CreateLine(place, position == 1 ? AppTheme.Accent : AppTheme.MutedText, AppTheme.SmallFont, 18),
+                string place = position == 1 ? "NEXT TO READ" : "WAITING #" + position;
+                Panel card = BuildCard(300, 60, () => SelectEvent(captured.Id, false),
                     CreateLine(captured.Title, AppTheme.BodyText, AppTheme.SectionFont, 24),
-                    CreateLine(captured.DisplayDate, AppTheme.MutedText, AppTheme.SmallFont, 18));
+                    CreateLine(place + "  \u2022  " + captured.EventDate.ToString("ddd d MMM"), position == 1 ? AppTheme.Accent : AppTheme.MutedText, AppTheme.SmallFont, 18));
                 card.Margin = new Padding(0, 0, 0, CardSpacing);
                 flpNotices.Controls.Add(card);
                 position++;
@@ -257,11 +263,10 @@ namespace MunicipalServicesApp.Forms
             foreach (LocalEvent item in EventCatalogue.GetRecentlyViewed())
             {
                 LocalEvent captured = item;
-                string place = index == 0 ? "Top of stack (removed first)" : "Viewed earlier";
-                Panel card = BuildCard(300, 72, () => SelectEvent(captured.Id, false),
-                    CreateLine(place, index == 0 ? AppTheme.Accent : AppTheme.MutedText, AppTheme.SmallFont, 18),
+                string place = index == 0 ? "TOP OF STACK (removed first)" : "VIEWED EARLIER";
+                Panel card = BuildCard(300, 60, () => SelectEvent(captured.Id, false),
                     CreateLine(captured.Title, AppTheme.BodyText, AppTheme.SectionFont, 24),
-                    CreateLine(captured.Category, AppTheme.MutedText, AppTheme.SmallFont, 18));
+                    CreateLine(place + "  \u2022  " + captured.Category, index == 0 ? AppTheme.Accent : AppTheme.MutedText, AppTheme.SmallFont, 18));
                 card.Margin = new Padding(0, 0, 0, CardSpacing);
                 flpRecent.Controls.Add(card);
                 index++;
@@ -350,11 +355,32 @@ namespace MunicipalServicesApp.Forms
                 card.Controls.Add(lines[i]);
             }
 
+            card.Paint += (s, e) =>
+            {
+                using (Pen pen = new Pen(AppTheme.CardBorder))
+                {
+                    e.Graphics.DrawRectangle(pen, 0, 0, card.Width - 1, card.Height - 1);
+                }
+            };
+
             EventHandler click = (s, e) => onClick();
+            EventHandler enter = (s, e) => card.BackColor = AppTheme.CardHover;
+            EventHandler leave = (s, e) =>
+            {
+                if (!card.ClientRectangle.Contains(card.PointToClient(Cursor.Position)))
+                {
+                    card.BackColor = AppTheme.Card;
+                }
+            };
+
             card.Click += click;
+            card.MouseEnter += enter;
+            card.MouseLeave += leave;
             foreach (Control child in card.Controls)
             {
                 child.Click += click;
+                child.MouseEnter += enter;
+                child.MouseLeave += leave;
                 child.Cursor = Cursors.Hand;
             }
 

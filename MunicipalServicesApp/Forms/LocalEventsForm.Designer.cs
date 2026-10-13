@@ -267,7 +267,7 @@ namespace MunicipalServicesApp.Forms
 
             this.colDetail = NewColumn("colDetail",
                 new RowStyle(SizeType.Absolute, 30F),
-                new RowStyle(SizeType.Absolute, 170F),
+                new RowStyle(SizeType.Absolute, 196F),
                 new RowStyle(SizeType.Absolute, 30F),
                 new RowStyle(SizeType.Percent, 100F));
             this.colDetail.Controls.Add(this.lblDetail, 0, 0);
@@ -341,7 +341,7 @@ namespace MunicipalServicesApp.Forms
             this.layoutBody.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             this.layoutBody.RowCount = 7;
             this.layoutBody.RowStyles.Add(new RowStyle(SizeType.Absolute, 28F));
-            this.layoutBody.RowStyles.Add(new RowStyle(SizeType.Absolute, 104F));
+            this.layoutBody.RowStyles.Add(new RowStyle(SizeType.Absolute, 100F));
             this.layoutBody.RowStyles.Add(new RowStyle(SizeType.Absolute, 28F));
             this.layoutBody.RowStyles.Add(new RowStyle(SizeType.Absolute, 44F));
             this.layoutBody.RowStyles.Add(new RowStyle(SizeType.Absolute, 26F));
@@ -361,10 +361,10 @@ namespace MunicipalServicesApp.Forms
             // ---------- form ----------
             this.AutoScaleDimensions = new SizeF(96F, 96F);
             this.AutoScaleMode = AutoScaleMode.Dpi;
-            this.ClientSize = new Size(1180, 760);
+            this.ClientSize = new Size(1180, 820);
             this.Controls.Add(this.layoutBody);
             this.Controls.Add(this.panelHeader);
-            this.MinimumSize = new Size(1000, 680);
+            this.MinimumSize = new Size(1000, 700);
             this.Name = "LocalEventsForm";
             this.StartPosition = FormStartPosition.CenterParent;
             this.Text = "Municipal Services - Local Events";
