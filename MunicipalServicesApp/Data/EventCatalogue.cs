@@ -52,8 +52,14 @@ namespace MunicipalServicesApp.Data
             IsLoaded = true;
         }
 
+        /// <summary>Records a search (Queue of recent searches) and counts category interest (Dictionary).</summary>
         public static void RecordSearch(string category, DateTime? date)
         {
+            if (string.IsNullOrEmpty(category) && !date.HasValue)
+            {
+                return; // an empty search says nothing about the user's preferences
+            }
+
             SearchHistory.Enqueue(new SearchRecord { Category = category, Date = date });
 
             if (SearchHistory.Count > MaxSearchHistory)
@@ -61,43 +67,77 @@ namespace MunicipalServicesApp.Data
                 SearchHistory.Dequeue();
             }
 
-            string key = string.IsNullOrEmpty(category) ? "All" : category;
-            if (!CategorySearchCounts.ContainsKey(key))
+            if (!string.IsNullOrEmpty(category))
             {
-                CategorySearchCounts[key] = 0;
+                AddInterest(category, 2); // a search is a strong signal
             }
-
-            CategorySearchCounts[key]++;
         }
 
+        private static void AddInterest(string category, int weight)
+        {
+            int current;
+            CategorySearchCounts.TryGetValue(category, out current);
+            CategorySearchCounts[category] = current + weight;
+        }
+
+        /// <summary>Announcements still waiting in the queue, front (next to be read) first.</summary>
         public static IEnumerable<LocalEvent> GetAnnouncements()
         {
             return AnnouncementQueue;
         }
 
-        public static void RotateAnnouncement()
+        public static int AnnouncementCount
         {
-            if (AnnouncementQueue.Count == 0)
-            {
-                return;
-            }
-
-            LocalEvent front = AnnouncementQueue.Dequeue();
-            AnnouncementQueue.Enqueue(front);
+            get { return AnnouncementQueue.Count; }
         }
 
+        /// <summary>Queue Dequeue: removes and returns the oldest waiting announcement (FIFO).</summary>
+        public static LocalEvent ReadNextAnnouncement()
+        {
+            return AnnouncementQueue.Count == 0 ? null : AnnouncementQueue.Dequeue();
+        }
+
+        /// <summary>Refills the queue once every notice has been read.</summary>
+        public static void ReloadAnnouncements()
+        {
+            AnnouncementQueue.Clear();
+            List<LocalEvent> notices = new List<LocalEvent>();
+            foreach (LocalEvent item in EventsById.Values)
+            {
+                if (item.IsAnnouncement)
+                {
+                    notices.Add(item);
+                }
+            }
+
+            notices.Sort((a, b) => a.EventDate.CompareTo(b.EventDate));
+            foreach (LocalEvent item in notices)
+            {
+                AnnouncementQueue.Enqueue(item);
+            }
+        }
+
+        /// <summary>Stack Push: the opened event goes on top. Viewing also counts as interest.</summary>
         public static void PushRecentlyViewed(string eventId)
         {
-            if (string.IsNullOrEmpty(eventId))
+            if (string.IsNullOrEmpty(eventId) || !EventsById.ContainsKey(eventId))
             {
                 return;
             }
 
-            // Keep the most recent at the top, avoid adjacent duplicates.
+            // Re-opening the event already on top does not stack it twice.
             if (RecentlyViewed.Count == 0 || RecentlyViewed.Peek() != eventId)
             {
                 RecentlyViewed.Push(eventId);
+                AddInterest(EventsById[eventId].Category, 1);
             }
+        }
+
+        public static LocalEvent PeekRecentlyViewed()
+        {
+            return RecentlyViewed.Count > 0 && EventsById.ContainsKey(RecentlyViewed.Peek())
+                ? EventsById[RecentlyViewed.Peek()]
+                : null;
         }
 
         public static LocalEvent PopRecentlyViewed()
@@ -116,10 +156,11 @@ namespace MunicipalServicesApp.Data
 
         public static IEnumerable<LocalEvent> GetRecentlyViewed()
         {
+            // Enumerating a Stack yields the top (most recent) first.
             List<LocalEvent> result = new List<LocalEvent>();
             foreach (string id in RecentlyViewed)
             {
-                if (EventsById.ContainsKey(id) && !result.Contains(EventsById[id]))
+                if (EventsById.ContainsKey(id))
                 {
                     result.Add(EventsById[id]);
                 }
@@ -248,12 +289,12 @@ namespace MunicipalServicesApp.Data
                 if (!string.IsNullOrEmpty(favouriteCategory) && item.Category == favouriteCategory)
                 {
                     score += 4;
-                    reasons.Add("Matches your most searched category: " + item.Category);
+                    reasons.Add("You often look at " + item.Category);
                 }
                 else if (last != null && !string.IsNullOrEmpty(last.Category) && item.Category == last.Category)
                 {
                     score += 2;
-                    reasons.Add("In category you just searched: " + item.Category);
+                    reasons.Add("Same category as your last search");
                 }
 
                 if (last != null && last.Date.HasValue)
@@ -262,7 +303,7 @@ namespace MunicipalServicesApp.Data
                     if (days <= 7)
                     {
                         score += 2;
-                        reasons.Add("Close to the date you searched");
+                        reasons.Add("Within a week of your searched date");
                     }
                 }
 
@@ -341,7 +382,6 @@ namespace MunicipalServicesApp.Data
             EventsByDate.Clear();
             Categories.Clear();
             UniqueDates.Clear();
-            AnnouncementQueue.Clear();
             FeaturedQueue.Clear();
 
             foreach (LocalEvent item in EventsById.Values)
@@ -357,15 +397,13 @@ namespace MunicipalServicesApp.Data
                 Categories.Add(item.Category);
                 UniqueDates.Add(dateKey);
 
-                if (item.IsAnnouncement)
-                {
-                    AnnouncementQueue.Enqueue(item);
-                }
-                else
+                if (!item.IsAnnouncement)
                 {
                     FeaturedQueue.Enqueue(item);
                 }
             }
+
+            ReloadAnnouncements();
 
             // Keep each date list in time order for stable output.
             foreach (List<LocalEvent> list in EventsByDate.Values)

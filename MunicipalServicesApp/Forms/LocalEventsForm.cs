@@ -9,27 +9,43 @@ using MunicipalServicesApp.UI;
 namespace MunicipalServicesApp.Forms
 {
     /// <summary>
-    /// Part 2 form: Local Events and Announcements. It demonstrates stacks, queues, priority
-    /// queues, dictionaries, sorted dictionaries, hash sets, and a recommendation algorithm.
+    /// Part 2 form: Local Events and Announcements.
+    /// Data structures on screen:
+    ///   Priority queue  - "Featured" cards (highest priority first)
+    ///   Queue           - "Latest notices" (first in, first out; "Read next notice" dequeues)
+    ///   Stack           - "Recently viewed" (last in, first out; "Undo last view" pops)
+    ///   SortedDictionary- events listed in date order
+    ///   Dictionary      - lookup by id and category interest counts
+    ///   HashSet         - unique categories in the filter drop-down
+    ///   Recommendations - scored from searches, viewed events and priority
     /// </summary>
     public partial class LocalEventsForm : Form
     {
-        private const int CardWidth = 360;
-        private const int CardHeight = 110;
-        private const int CardSpacing = 12;
+        private const int CardSpacing = 8;
+
+        private readonly List<LocalEvent> currentResults = new List<LocalEvent>();
+        private bool filtered;
 
         public LocalEventsForm()
         {
             InitializeComponent();
             ApplyTheme();
             EventCatalogue.Load();
+
+            flpResults.SizeChanged += (s, e) => FitCards(flpResults);
+            flpRecommendations.SizeChanged += (s, e) => FitCards(flpRecommendations);
+            flpNotices.SizeChanged += (s, e) => FitCards(flpNotices);
+            flpRecent.SizeChanged += (s, e) => FitCards(flpRecent);
+
             LoadFilters();
             ShowFeatured();
-            ShowAnnouncements();
-            ShowRecentlyViewed();
-            ShowRecommendations();
             ShowResults(EventCatalogue.GetUpcomingEvents());
+            ShowNotices();
+            ShowRecentlyViewed(null);
+            ShowRecommendations();
         }
+
+        // ------------------------------------------------------------------ theme
 
         private void ApplyTheme()
         {
@@ -41,73 +57,93 @@ namespace MunicipalServicesApp.Forms
             lblSubtitle.ForeColor = AppTheme.HeaderText;
             lblSubtitle.Font = AppTheme.SubtitleFont;
 
-            lblFeatured.Font = AppTheme.SectionFont;
-            lblSearch.Font = AppTheme.SectionFont;
-            lblResults.Font = AppTheme.SectionFont;
-            lblDetail.Font = AppTheme.SectionFont;
-            lblRecommendations.Font = AppTheme.SectionFont;
-            lblRecent.Font = AppTheme.SectionFont;
-            lblNotices.Font = AppTheme.SectionFont;
-
             foreach (Label label in new[] { lblFeatured, lblSearch, lblResults, lblDetail, lblRecommendations, lblRecent, lblNotices })
             {
+                label.Font = AppTheme.SectionFont;
                 label.ForeColor = AppTheme.BodyText;
             }
 
-            lblCategory.ForeColor = AppTheme.BodyText;
-            lblCategory.Font = AppTheme.BodyFont;
-            lblDate.ForeColor = AppTheme.BodyText;
-            lblDate.Font = AppTheme.BodyFont;
-            lblNoResults.ForeColor = AppTheme.MutedText;
+            foreach (Label label in new[] { lblCategory, lblDate })
+            {
+                label.Font = AppTheme.BodyFont;
+                label.ForeColor = AppTheme.BodyText;
+            }
+
+            foreach (Label label in new[] { lblNoResults, lblSearchHint, lblQueueInfo, lblStackInfo })
+            {
+                label.Font = AppTheme.SmallFont;
+                label.ForeColor = AppTheme.MutedText;
+            }
+
             lblNoResults.Font = AppTheme.BodyFont;
-            lblSearchHint.ForeColor = AppTheme.MutedText;
-            lblSearchHint.Font = AppTheme.SmallFont;
+            lblNoResults.Padding = new Padding(0, 6, 0, 6);
 
             cboCategory.Font = AppTheme.BodyFont;
             dtpEventDate.Font = AppTheme.BodyFont;
             chkAnyDate.Font = AppTheme.BodyFont;
+            chkAnyDate.ForeColor = AppTheme.BodyText;
 
-            btnSearch.BackColor = AppTheme.Accent;
-            btnSearch.ForeColor = AppTheme.AccentText;
-            btnSearch.Font = AppTheme.ButtonFont;
-            btnSearch.FlatAppearance.BorderSize = 0;
+            StylePrimary(btnSearch);
+            StylePrimary(btnNextNotice);
+            StyleSecondary(btnClear);
+            StyleSecondary(btnPopRecent);
+            StyleSecondary(btnBack);
 
-            btnClear.BackColor = AppTheme.Card;
-            btnClear.ForeColor = AppTheme.BodyText;
-            btnClear.Font = AppTheme.ButtonFont;
-            btnClear.FlatAppearance.BorderColor = AppTheme.Border;
-
-            btnBack.BackColor = AppTheme.Card;
-            btnBack.ForeColor = AppTheme.BodyText;
-            btnBack.Font = AppTheme.ButtonFont;
-            btnBack.FlatAppearance.BorderColor = AppTheme.Border;
-
-            btnNextNotice.BackColor = AppTheme.Accent;
-            btnNextNotice.ForeColor = AppTheme.AccentText;
-            btnNextNotice.Font = AppTheme.ButtonFont;
-            btnNextNotice.FlatAppearance.BorderSize = 0;
-
-            btnPopRecent.BackColor = AppTheme.Card;
-            btnPopRecent.ForeColor = AppTheme.BodyText;
-            btnPopRecent.Font = AppTheme.ButtonFont;
-            btnPopRecent.FlatAppearance.BorderColor = AppTheme.Border;
-
-            panelFeatured.BackColor = AppTheme.Background;
             panelDetail.BackColor = AppTheme.Card;
-            panelDetail.ForeColor = AppTheme.BodyText;
-
             txtDetailTitle.Font = AppTheme.SectionFont;
             txtDetailTitle.ForeColor = AppTheme.BodyText;
-            txtDetailTitle.AutoSize = false;
             txtDetailBody.Font = AppTheme.BodyFont;
             txtDetailBody.ForeColor = AppTheme.BodyText;
-            txtDetailBody.BackColor = AppTheme.Card;
-            txtDetailBody.AutoSize = false;
+
+            foreach (FlowLayoutPanel panel in new[] { panelFeatured, flpResults, flpRecommendations, flpNotices, flpRecent })
+            {
+                panel.BackColor = AppTheme.Background;
+            }
 
             toolTip.SetToolTip(btnSearch, "Find events matching the chosen category and date.");
             toolTip.SetToolTip(btnClear, "Clear the filters and show all upcoming events.");
-            toolTip.SetToolTip(btnNextNotice, "Show the next notice in the queue.");
-            toolTip.SetToolTip(btnPopRecent, "Remove the most recently viewed event from the list.");
+            toolTip.SetToolTip(btnNextNotice, "Queue: remove the oldest notice from the front and read it.");
+            toolTip.SetToolTip(btnPopRecent, "Stack: remove the most recently viewed event from the top.");
+        }
+
+        private static void StylePrimary(Button button)
+        {
+            button.BackColor = AppTheme.Accent;
+            button.ForeColor = AppTheme.AccentText;
+            button.Font = AppTheme.ButtonFont;
+            button.FlatAppearance.BorderSize = 0;
+            button.Cursor = Cursors.Hand;
+        }
+
+        private static void StyleSecondary(Button button)
+        {
+            button.BackColor = AppTheme.Card;
+            button.ForeColor = AppTheme.BodyText;
+            button.Font = AppTheme.ButtonFont;
+            button.FlatAppearance.BorderColor = AppTheme.Border;
+            button.FlatAppearance.BorderSize = 1;
+            button.Cursor = Cursors.Hand;
+        }
+
+        private static void SetEnabled(Button button, bool enabled, bool primary)
+        {
+            button.Enabled = enabled;
+            if (enabled)
+            {
+                if (primary)
+                {
+                    StylePrimary(button);
+                }
+                else
+                {
+                    StyleSecondary(button);
+                }
+            }
+            else
+            {
+                button.BackColor = AppTheme.Disabled;
+                button.ForeColor = AppTheme.MutedText;
+            }
         }
 
         private void LoadFilters()
@@ -124,188 +160,223 @@ namespace MunicipalServicesApp.Forms
             dtpEventDate.Enabled = false;
         }
 
+        // ------------------------------------------------------------------ sections
+
         private void ShowFeatured()
         {
             panelFeatured.Controls.Clear();
+            int rank = 1;
             foreach (LocalEvent item in EventCatalogue.GetFeatured(3))
             {
-                Panel card = BuildFeaturedCard(item);
+                LocalEvent captured = item;
+                Panel card = BuildCard(292, 94, () => SelectEvent(captured.Id, true),
+                    CreateLine("#" + rank + " featured  \u2022  priority " + item.Priority, AppTheme.Accent, AppTheme.SmallFont, 18),
+                    CreateLine(item.Title, AppTheme.BodyText, AppTheme.SectionFont, 24),
+                    CreateLine(item.DisplayDate, AppTheme.MutedText, AppTheme.BodyFont, 22));
                 card.Margin = new Padding(0, 0, 12, 0);
                 panelFeatured.Controls.Add(card);
+                rank++;
             }
         }
-
-        private void ShowAnnouncements()
-        {
-            flpNotices.Controls.Clear();
-            foreach (LocalEvent item in EventCatalogue.GetAnnouncements())
-            {
-                Label notice = new Label
-                {
-                    Text = "\u2022 " + item.Title + " - " + item.Summary,
-                    Font = AppTheme.BodyFont,
-                    ForeColor = AppTheme.BodyText,
-                    AutoSize = true,
-                    MaximumSize = new Size(flpNotices.Width - 12, 0),
-                    Padding = new Padding(4)
-                };
-
-                flpNotices.Controls.Add(notice);
-            }
-        }
-
-        private void ShowRecommendations()
-        {
-            flpRecommendations.Controls.Clear();
-            HashSet<string> shownIds = new HashSet<string>();
-
-            foreach (LocalEvent result in currentResults)
-            {
-                shownIds.Add(result.Id);
-            }
-
-            foreach (EventCatalogue.RecommendedEvent rec in EventCatalogue.GetRecommendations(4, shownIds))
-            {
-                Panel card = BuildRecommendationCard(rec);
-                flpRecommendations.Controls.Add(card);
-            }
-
-            if (flpRecommendations.Controls.Count == 0)
-            {
-                Label none = new Label
-                {
-                    Text = "Search or choose a category to see personalised recommendations.",
-                    Font = AppTheme.BodyFont,
-                    ForeColor = AppTheme.MutedText,
-                    AutoSize = true
-                };
-
-                flpRecommendations.Controls.Add(none);
-            }
-        }
-
-        private List<LocalEvent> currentResults = new List<LocalEvent>();
 
         private void ShowResults(IEnumerable<LocalEvent> events)
         {
             currentResults.Clear();
+            flpResults.SuspendLayout();
             flpResults.Controls.Clear();
 
             foreach (LocalEvent item in events)
             {
-                currentResults.Add(item);
-                Panel card = BuildResultCard(item);
+                LocalEvent captured = item;
+                currentResults.Add(captured);
+
+                string kind = captured.IsAnnouncement ? "Announcement" : "Event";
+                Panel card = BuildCard(300, 96, () => SelectEvent(captured.Id, true),
+                    CreateLine(captured.Title, AppTheme.BodyText, AppTheme.SectionFont, 24),
+                    CreateLine(kind + "  \u2022  " + captured.Category, AppTheme.Accent, AppTheme.SmallFont, 18),
+                    CreateLine(captured.DisplayDate, AppTheme.MutedText, AppTheme.BodyFont, 22));
                 flpResults.Controls.Add(card);
             }
+
+            FitCards(flpResults);
+            flpResults.ResumeLayout();
+
+            lblResults.Text = (filtered ? "Search results" : "Upcoming events") + " (" + currentResults.Count + ")";
 
             bool empty = currentResults.Count == 0;
             lblNoResults.Visible = empty;
             if (empty)
             {
-                lblNoResults.Text = "No events found for this filter. Try a different category or date.";
+                lblNoResults.Text = "No events match this search. Try another category or tick \"Any date\".";
             }
         }
 
-        private Panel BuildFeaturedCard(LocalEvent item)
+        /// <summary>Queue view: front of the queue is listed first and marked "Next".</summary>
+        private void ShowNotices()
         {
-            Panel card = CreateCard(280, 90);
-            Label title = CreateCardTitle(item.Title);
-            Label meta = CreateCardMeta(item.DisplayDate);
-            Label reason = CreateCardMeta("Featured");
-            reason.ForeColor = AppTheme.Accent;
+            flpNotices.SuspendLayout();
+            flpNotices.Controls.Clear();
 
-            title.Dock = DockStyle.Top;
-            meta.Dock = DockStyle.Top;
-            reason.Dock = DockStyle.Top;
-
-            card.Controls.Add(title);
-            card.Controls.Add(meta);
-            card.Controls.Add(reason);
-
-            card.Click += (s, e) => SelectEvent(item.Id);
-            foreach (Control c in card.Controls)
+            int position = 1;
+            foreach (LocalEvent item in EventCatalogue.GetAnnouncements())
             {
-                c.Click += (s, e) => SelectEvent(item.Id);
+                LocalEvent captured = item;
+                string place = position == 1 ? "Next to read" : "Waiting #" + position;
+                Panel card = BuildCard(300, 72, () => SelectEvent(captured.Id, false),
+                    CreateLine(place, position == 1 ? AppTheme.Accent : AppTheme.MutedText, AppTheme.SmallFont, 18),
+                    CreateLine(captured.Title, AppTheme.BodyText, AppTheme.SectionFont, 24),
+                    CreateLine(captured.DisplayDate, AppTheme.MutedText, AppTheme.SmallFont, 18));
+                card.Margin = new Padding(0, 0, 0, CardSpacing);
+                flpNotices.Controls.Add(card);
+                position++;
             }
 
-            return card;
-        }
-
-        private Panel BuildRecommendationCard(EventCatalogue.RecommendedEvent rec)
-        {
-            Panel card = CreateCard(340, 90);
-            Label title = CreateCardTitle(rec.Event.Title);
-            Label reason = CreateCardMeta(rec.Reason);
-            reason.ForeColor = AppTheme.Accent;
-
-            title.Dock = DockStyle.Top;
-            reason.Dock = DockStyle.Top;
-
-            card.Controls.Add(title);
-            card.Controls.Add(reason);
-
-            card.Click += (s, e) => SelectEvent(rec.Event.Id);
-            foreach (Control c in card.Controls)
+            int count = EventCatalogue.AnnouncementCount;
+            if (count == 0)
             {
-                c.Click += (s, e) => SelectEvent(rec.Event.Id);
+                lblQueueInfo.Text = "All notices read. The queue is empty.";
+                flpNotices.Controls.Add(CreateHint("No notices waiting. Press Reload notices to start again."));
             }
-
-            return card;
-        }
-
-        private Panel BuildResultCard(LocalEvent item)
-        {
-            Panel card = CreateCard(CardWidth, CardHeight);
-            Label title = CreateCardTitle(item.Title);
-            Label meta = CreateCardMeta(item.Category + "  \u2022  " + item.DisplayDate);
-            Label venue = CreateCardMeta(item.Venue);
-            venue.ForeColor = AppTheme.MutedText;
-
-            title.Dock = DockStyle.Top;
-            meta.Dock = DockStyle.Top;
-            venue.Dock = DockStyle.Top;
-
-            card.Controls.Add(title);
-            card.Controls.Add(meta);
-            card.Controls.Add(venue);
-
-            card.Click += (s, e) => SelectEvent(item.Id);
-            foreach (Control c in card.Controls)
+            else
             {
-                c.Click += (s, e) => SelectEvent(item.Id);
+                lblQueueInfo.Text = count + " waiting. The oldest notice is read first.";
             }
 
-            return card;
+            btnNextNotice.Text = count == 0 ? "Reload notices" : "Read next notice";
+            FitCards(flpNotices);
+            flpNotices.ResumeLayout();
         }
 
-        private Panel CreateCard(int width, int height)
+        /// <summary>Stack view: top of the stack (most recent) is listed first.</summary>
+        private void ShowRecentlyViewed(string statusMessage)
         {
-            return new Panel
+            flpRecent.SuspendLayout();
+            flpRecent.Controls.Clear();
+
+            int index = 0;
+            foreach (LocalEvent item in EventCatalogue.GetRecentlyViewed())
+            {
+                LocalEvent captured = item;
+                string place = index == 0 ? "Top of stack (removed first)" : "Viewed earlier";
+                Panel card = BuildCard(300, 72, () => SelectEvent(captured.Id, false),
+                    CreateLine(place, index == 0 ? AppTheme.Accent : AppTheme.MutedText, AppTheme.SmallFont, 18),
+                    CreateLine(captured.Title, AppTheme.BodyText, AppTheme.SectionFont, 24),
+                    CreateLine(captured.Category, AppTheme.MutedText, AppTheme.SmallFont, 18));
+                card.Margin = new Padding(0, 0, 0, CardSpacing);
+                flpRecent.Controls.Add(card);
+                index++;
+            }
+
+            if (index == 0)
+            {
+                lblStackInfo.Text = string.IsNullOrEmpty(statusMessage) ? "Stack is empty." : statusMessage;
+                flpRecent.Controls.Add(CreateHint("Click an event card and it is pushed onto this stack."));
+            }
+            else
+            {
+                lblStackInfo.Text = string.IsNullOrEmpty(statusMessage)
+                    ? index + " viewed. The newest is removed first."
+                    : statusMessage;
+            }
+
+            SetEnabled(btnPopRecent, index > 0, false);
+            FitCards(flpRecent);
+            flpRecent.ResumeLayout();
+        }
+
+        private void ShowRecommendations()
+        {
+            flpRecommendations.SuspendLayout();
+            flpRecommendations.Controls.Clear();
+
+            HashSet<string> viewedIds = new HashSet<string>();
+            foreach (LocalEvent viewed in EventCatalogue.GetRecentlyViewed())
+            {
+                viewedIds.Add(viewed.Id);
+            }
+
+            foreach (EventCatalogue.RecommendedEvent rec in EventCatalogue.GetRecommendations(5, viewedIds))
+            {
+                EventCatalogue.RecommendedEvent captured = rec;
+                Panel card = BuildCard(300, 106, () => SelectEvent(captured.Event.Id, true),
+                    CreateLine(captured.Event.Title, AppTheme.BodyText, AppTheme.SectionFont, 24),
+                    CreateLine(captured.Event.DisplayDate, AppTheme.MutedText, AppTheme.SmallFont, 18),
+                    CreateLine("Why: " + captured.Reason, AppTheme.Accent, AppTheme.SmallFont, 34));
+                flpRecommendations.Controls.Add(card);
+            }
+
+            if (flpRecommendations.Controls.Count == 0)
+            {
+                flpRecommendations.Controls.Add(CreateHint("Search or open events and suggestions will appear here."));
+            }
+
+            FitCards(flpRecommendations);
+            flpRecommendations.ResumeLayout();
+        }
+
+        private void ShowDetail(LocalEvent item, string prefix)
+        {
+            txtDetailTitle.Text = item.Title;
+            txtDetailBody.Text = (string.IsNullOrEmpty(prefix) ? string.Empty : prefix + Environment.NewLine) +
+                                 item.Category + "  \u2022  " + (item.IsAnnouncement ? "Announcement" : "Event") + Environment.NewLine +
+                                 item.DisplayDate + Environment.NewLine +
+                                 "Venue: " + item.Venue + Environment.NewLine + Environment.NewLine +
+                                 item.Summary;
+        }
+
+        private void ResetDetail()
+        {
+            txtDetailTitle.Text = "Click an event to see its details.";
+            txtDetailBody.Text = "The event you open is also added to the Recently viewed stack.";
+        }
+
+        // ------------------------------------------------------------------ card helpers
+
+        private Panel BuildCard(int width, int height, Action onClick, params Label[] lines)
+        {
+            Panel card = new Panel
             {
                 Width = width,
                 Height = height,
                 BackColor = AppTheme.Card,
-                BorderStyle = BorderStyle.None,
                 Margin = new Padding(0, 0, 0, CardSpacing),
-                Padding = new Padding(12),
+                Padding = new Padding(10, 8, 10, 6),
                 Cursor = Cursors.Hand
             };
+
+            // Controls added later are docked first (at the top), so add the lines in reverse.
+            for (int i = lines.Length - 1; i >= 0; i--)
+            {
+                card.Controls.Add(lines[i]);
+            }
+
+            EventHandler click = (s, e) => onClick();
+            card.Click += click;
+            foreach (Control child in card.Controls)
+            {
+                child.Click += click;
+                child.Cursor = Cursors.Hand;
+            }
+
+            return card;
         }
 
-        private Label CreateCardTitle(string text)
+        private static Label CreateLine(string text, Color color, Font font, int height)
         {
             return new Label
             {
                 Text = text,
-                Font = AppTheme.SectionFont,
-                ForeColor = AppTheme.BodyText,
+                Font = font,
+                ForeColor = color,
                 AutoSize = false,
-                Height = 22,
-                Dock = DockStyle.Top
+                AutoEllipsis = true,
+                Height = height,
+                Dock = DockStyle.Top,
+                TextAlign = ContentAlignment.MiddleLeft
             };
         }
 
-        private Label CreateCardMeta(string text)
+        private static Label CreateHint(string text)
         {
             return new Label
             {
@@ -313,12 +384,34 @@ namespace MunicipalServicesApp.Forms
                 Font = AppTheme.BodyFont,
                 ForeColor = AppTheme.MutedText,
                 AutoSize = false,
-                Height = 20,
-                Dock = DockStyle.Top
+                Width = 280,
+                Height = 40
             };
         }
 
-        private void SelectEvent(string eventId)
+        /// <summary>Stretches cards to the visible width so nothing is clipped or horizontally scrolled.</summary>
+        private static void FitCards(FlowLayoutPanel panel)
+        {
+            int width = panel.ClientSize.Width - panel.Padding.Horizontal - SystemInformation.VerticalScrollBarWidth - 4;
+            if (width < 180)
+            {
+                return;
+            }
+
+            foreach (Control control in panel.Controls)
+            {
+                control.Width = width;
+            }
+        }
+
+        // ------------------------------------------------------------------ actions
+
+        /// <summary>
+        /// Opens an event. When <paramref name="record"/> is true the event is pushed on the
+        /// recently viewed stack and counted as interest; links inside the stack and queue only
+        /// display the event so they never change the stack by accident.
+        /// </summary>
+        private void SelectEvent(string eventId, bool record)
         {
             LocalEvent item = EventCatalogue.GetById(eventId);
             if (item == null)
@@ -326,45 +419,13 @@ namespace MunicipalServicesApp.Forms
                 return;
             }
 
-            EventCatalogue.PushRecentlyViewed(eventId);
-            ShowRecentlyViewed();
+            ShowDetail(item, null);
 
-            txtDetailTitle.Text = item.Title;
-            txtDetailBody.Text = item.Category + Environment.NewLine +
-                                 item.DisplayDate + Environment.NewLine +
-                                 "Venue: " + item.Venue + Environment.NewLine + Environment.NewLine +
-                                 item.Summary;
-        }
-
-        private void ShowRecentlyViewed()
-        {
-            flpRecent.Controls.Clear();
-            foreach (LocalEvent item in EventCatalogue.GetRecentlyViewed())
+            if (record)
             {
-                LinkLabel link = new LinkLabel
-                {
-                    Text = item.Title,
-                    Font = AppTheme.BodyFont,
-                    AutoSize = true,
-                    Padding = new Padding(2),
-                    Tag = item.Id
-                };
-
-                link.LinkClicked += (s, e) => SelectEvent(link.Tag.ToString());
-                flpRecent.Controls.Add(link);
-            }
-
-            if (flpRecent.Controls.Count == 0)
-            {
-                Label empty = new Label
-                {
-                    Text = "Click an event card to build this list.",
-                    Font = AppTheme.BodyFont,
-                    ForeColor = AppTheme.MutedText,
-                    AutoSize = true
-                };
-
-                flpRecent.Controls.Add(empty);
+                EventCatalogue.PushRecentlyViewed(eventId);
+                ShowRecentlyViewed("Pushed: " + item.Title);
+                ShowRecommendations();
             }
         }
 
@@ -373,9 +434,9 @@ namespace MunicipalServicesApp.Forms
             string category = cboCategory.SelectedIndex <= 0 ? null : cboCategory.SelectedItem.ToString();
             DateTime? date = chkAnyDate.Checked ? (DateTime?)null : dtpEventDate.Value;
 
+            filtered = category != null || date.HasValue;
             EventCatalogue.RecordSearch(category ?? string.Empty, date);
-            IEnumerable<LocalEvent> matches = EventCatalogue.Search(category, date);
-            ShowResults(matches);
+            ShowResults(EventCatalogue.Search(category, date));
             ShowRecommendations();
         }
 
@@ -384,6 +445,7 @@ namespace MunicipalServicesApp.Forms
             cboCategory.SelectedIndex = 0;
             chkAnyDate.Checked = true;
             dtpEventDate.Enabled = false;
+            filtered = false;
             ShowResults(EventCatalogue.GetUpcomingEvents());
             ShowRecommendations();
         }
@@ -395,18 +457,42 @@ namespace MunicipalServicesApp.Forms
 
         private void BtnNextNotice_Click(object sender, EventArgs e)
         {
-            EventCatalogue.RotateAnnouncement();
-            ShowAnnouncements();
+            if (EventCatalogue.AnnouncementCount == 0)
+            {
+                EventCatalogue.ReloadAnnouncements();
+                ShowNotices();
+                return;
+            }
+
+            LocalEvent notice = EventCatalogue.ReadNextAnnouncement();
+            ShowNotices();
+            if (notice != null)
+            {
+                ShowDetail(notice, "Notice read (removed from the front of the queue)");
+            }
         }
 
         private void BtnPopRecent_Click(object sender, EventArgs e)
         {
             LocalEvent removed = EventCatalogue.PopRecentlyViewed();
-            ShowRecentlyViewed();
-            if (removed != null)
+            if (removed == null)
             {
-                MessageBox.Show(this, "Removed: " + removed.Title, "Recently viewed", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
             }
+
+            ShowRecentlyViewed("Removed: " + removed.Title);
+
+            LocalEvent top = EventCatalogue.PeekRecentlyViewed();
+            if (top != null)
+            {
+                ShowDetail(top, null);
+            }
+            else
+            {
+                ResetDetail();
+            }
+
+            ShowRecommendations();
         }
 
         private void BtnBack_Click(object sender, EventArgs e)

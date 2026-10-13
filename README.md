@@ -101,18 +101,18 @@ After a successful submission the bar shows 100%, then resets to 0% for the next
 
 Click **Local Events and Announcements**. The events window contains:
 
-- **Featured** — a strip of the three highest-priority upcoming events.
+- **Featured (priority queue)** — the three highest-priority upcoming events, ranked #1 to #3.
 - **Search** — choose a category and/or a date, then press **Search**.
-  Tick **Any date** to ignore the date filter.
-  Press **Clear** to show all upcoming events again.
-- **Upcoming events** — a scrollable list of matching events.
-  Click a card to see its details, add it to "Recently viewed", and update recommendations.
-- **Selected event** — shows the title, category, date, venue and full summary.
-- **Recommended for you** — suggests related events based on your searches.
-- **Recently viewed (stack)** — links to events you have clicked.
-  Press **Remove last viewed** to pop the most recent item off the stack.
-- **Latest notices (queue)** — short municipal announcements.
-  Press **Next notice** to rotate the queue (dequeue the front, enqueue it at the back).
+  Tick **Any date** to ignore the date filter. Press **Clear** to show all upcoming events again.
+- **Upcoming events / Search results** — scrollable cards with a count in the heading.
+  Click a card to open it: details appear, the event is pushed on the stack, recommendations update.
+- **Selected event** — title, category, date, venue and summary.
+- **Recommended for you** — related events, each with a "Why:" line.
+- **Latest notices (queue)** — the front item is marked "Next to read".
+  Press **Read next notice** to dequeue it and read it. When the queue is empty the button becomes
+  **Reload notices**.
+- **Recently viewed (stack)** — newest event on top ("Top of stack").
+  Press **Undo last view** to pop it. The button is disabled when the stack is empty.
 
 Search tip: search a category such as **Recreation** or **Utilities**, then watch the
 recommendation panel update.
@@ -136,24 +136,25 @@ The Local Events feature uses the structures listed below. Their roles are descr
 | `Dictionary<string, LocalEvent>` | `Data/EventCatalogue.cs` | Hash table for fast lookup of an event by its unique id. | Clicking a card or recommendation shows the event details instantly. |
 | `SortedDictionary<DateTime, List<LocalEvent>>` | `Data/EventCatalogue.cs` | Keeps events sorted by date for chronological listing and date filtering. | The "Upcoming events" list and date search results are ordered by date. |
 | `HashSet<string>` and `HashSet<DateTime>` | `Data/EventCatalogue.cs` | Stores unique categories and unique dates used to build the filter controls. | The category drop-down and date search use these unique values. |
-| `Queue<LocalEvent>` | `Data/EventCatalogue.cs` | Holds the latest announcements in FIFO order. | The "Latest notices" panel and "Next notice" button rotate the queue. |
+| `Queue<LocalEvent>` | `Data/EventCatalogue.cs` | Holds the latest announcements in FIFO order. | The "Latest notices" panel; "Read next notice" dequeues the front item. |
 | `Queue<SearchRecord>` | `Data/EventCatalogue.cs` | Records recent user searches to feed the recommendation engine. | Search patterns influence the "Recommended for you" panel. |
 | `Dictionary<string, int>` | `Data/EventCatalogue.cs` | Counts how often each category is searched. | The most-searched category boosts recommendation scores. |
-| `Stack<string>` | `Data/EventCatalogue.cs` | Tracks the ids of recently viewed events. | The "Recently viewed (stack)" panel and "Remove last viewed" button. |
+| `Stack<string>` | `Data/EventCatalogue.cs` | Tracks the ids of recently viewed events. | The "Recently viewed (stack)" panel and "Undo last view" button. |
 | `SimplePriorityQueue` (binary heap) | `Data/SimplePriorityQueue.cs` | Orders events by priority then date. | The "Featured" strip shows the top three items from the queue. |
 
 ## 6. Recommendation feature
 
 `EventCatalogue.GetRecommendations` analyses the user's search history and current results:
 
-1. It finds the most-searched category from the `Dictionary<string, int>`.
-2. It looks at the most recent search (from the `Queue<SearchRecord>`) for category and date.
-3. It scores every upcoming event that is not already in the current results:
-   - +4 if the event's category matches the most-searched category.
-   - +2 if the event's category matches the last searched category.
-   - +2 if the event's date is within seven days of the last searched date.
-   - +2 if the event has a high priority.
-4. It returns the top three, each with a short reason shown on the card.
+1. Each search adds 2 points to its category and each opened event adds 1 (`Dictionary<string, int>`).
+   The category with the most points is the favourite.
+2. The most recent search (from the `Queue<SearchRecord>`) gives a category and date.
+3. It scores every upcoming event that is not already in the Recently viewed stack:
+   - +4 if the category is the favourite.
+   - +2 if the category matches the last search (when it is not the favourite).
+   - +2 if the date is within seven days of the last searched date.
+   - +2 if the event has priority 3 or higher.
+4. It returns the top five by score (ties by date), each with a "Why:" reason on the card.
 
 ## 7. Project structure
 
