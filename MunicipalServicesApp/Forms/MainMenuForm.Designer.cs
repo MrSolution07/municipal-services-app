@@ -120,15 +120,16 @@ namespace MunicipalServicesApp.Forms
             // btnLocalEvents
             //
             this.btnLocalEvents.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnLocalEvents.Enabled = false;
+            this.btnLocalEvents.Enabled = true;
             this.btnLocalEvents.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnLocalEvents.Location = new System.Drawing.Point(27, 161);
             this.btnLocalEvents.Margin = new System.Windows.Forms.Padding(3, 6, 3, 6);
             this.btnLocalEvents.Name = "btnLocalEvents";
             this.btnLocalEvents.Size = new System.Drawing.Size(650, 88);
             this.btnLocalEvents.TabIndex = 2;
-            this.btnLocalEvents.Text = "2.  Local Events and Announcements  (available later)";
+            this.btnLocalEvents.Text = "2.  Local Events and Announcements";
             this.btnLocalEvents.UseVisualStyleBackColor = true;
+            this.btnLocalEvents.Click += new System.EventHandler(this.BtnLocalEvents_Click);
             //
             // btnServiceStatus
             //

@@ -1,12 +1,12 @@
-# Municipal Services Application for South Africa — Part 1 (Report Issues)
+# Municipal Services Application for South Africa — Part 2
 
+A C# .NET Framework Windows Forms application that helps residents interact with their municipality.
 
-A C# .NET Framework Windows Forms application that lets residents report municipal issues
-(location, category, description, optional photo or document) and shows a live progress bar
-that encourages them to complete the report.
+- **Part 1 (Report Issues)** — report an issue with location, category, description and optional media, guided by a progress bar.
+- **Part 2 (Local Events and Announcements)** — search upcoming events and announcements by category and date, see featured and recommended items, and track recently viewed items.
+- **Part 3 (Service Request Status)** — disabled on the menu; this part is implemented later in the POE.
 
-Part 1 implements **Report Issues** only. Local Events and Announcements (Part 2) and
-Service Request Status (Part 3) appear on the main menu but are disabled, as required by the brief.
+Storage is in memory, so data is cleared when the application closes.
 
 ---
 
@@ -43,11 +43,11 @@ The application starts on the **Main Menu**.
 
 ### 4.1 Main menu
 
-The main menu opens on startup and offers the three municipal tasks:
+The main menu opens on startup and offers three municipal tasks:
 
-1. **Report Issues** — enabled.
-2. **Local Events and Announcements** — disabled, added in Part 2.
-3. **Service Request Status** — disabled, added in Part 3.
+1. **Report Issues** — enabled (Part 1).
+2. **Local Events and Announcements** — enabled (Part 2).
+3. **Service Request Status** — disabled; this feature is added in Part 3.
 
 Hovering over a disabled button shows a tooltip explaining when the feature arrives.
 The bottom of the menu shows **Issues reported this session**, which is the number of reports
@@ -82,7 +82,7 @@ in the field that still needs attention. Nothing is saved until every required f
 
 ### 4.3 The engagement feature (progress bar and message)
 
-The progress bar and the message underneath it are the implemented user engagement strategy:
+The progress bar and the message underneath it are the Part 1 user engagement strategy:
 **progressive completion**. The resident always sees how complete the report is and what to do next.
 
 | Part of the report | Contribution |
@@ -97,15 +97,65 @@ The message under the bar changes with progress, for example
 When the report reaches 100% the message invites the resident to press Submit.
 After a successful submission the bar shows 100%, then resets to 0% for the next report.
 
-## 5. Data structure used
+### 4.4 Local Events and Announcements
+
+Click **Local Events and Announcements**. The events window contains:
+
+- **Featured** — a strip of the three highest-priority upcoming events.
+- **Search** — choose a category and/or a date, then press **Search**.
+  Tick **Any date** to ignore the date filter.
+  Press **Clear** to show all upcoming events again.
+- **Upcoming events** — a scrollable list of matching events.
+  Click a card to see its details, add it to "Recently viewed", and update recommendations.
+- **Selected event** — shows the title, category, date, venue and full summary.
+- **Recommended for you** — suggests related events based on your searches.
+- **Recently viewed (stack)** — links to events you have clicked.
+  Press **Remove last viewed** to pop the most recent item off the stack.
+- **Latest notices (queue)** — short municipal announcements.
+  Press **Next notice** to rotate the queue (dequeue the front, enqueue it at the back).
+
+Search tip: search a category such as **Recreation** or **Utilities**, then watch the
+recommendation panel update.
+
+## 5. Data structures and their roles
+
+### Part 1
 
 Reported issues are stored in a `List<IssueReport>` inside `Data/IssueStore.cs`.
 Each `IssueReport` (see `Models/IssueReport.cs`) holds the location, category, description,
 attachment path, reference number, and submission timestamp. The list preserves submission order,
 new reports are appended with `List.Add`, and the count is shown on the main menu.
-Storage is in memory for Part 1, so reports are cleared when the application closes.
 
-## 6. Project structure
+### Part 2
+
+The Local Events feature uses the structures listed below. Their roles are described in
+`Data/EventCatalogue.cs` and `Data/SimplePriorityQueue.cs`.
+
+| Structure | File | Role in the application | Where the user sees it |
+|---|---|---|---|
+| `Dictionary<string, LocalEvent>` | `Data/EventCatalogue.cs` | Hash table for fast lookup of an event by its unique id. | Clicking a card or recommendation shows the event details instantly. |
+| `SortedDictionary<DateTime, List<LocalEvent>>` | `Data/EventCatalogue.cs` | Keeps events sorted by date for chronological listing and date filtering. | The "Upcoming events" list and date search results are ordered by date. |
+| `HashSet<string>` and `HashSet<DateTime>` | `Data/EventCatalogue.cs` | Stores unique categories and unique dates used to build the filter controls. | The category drop-down and date search use these unique values. |
+| `Queue<LocalEvent>` | `Data/EventCatalogue.cs` | Holds the latest announcements in FIFO order. | The "Latest notices" panel and "Next notice" button rotate the queue. |
+| `Queue<SearchRecord>` | `Data/EventCatalogue.cs` | Records recent user searches to feed the recommendation engine. | Search patterns influence the "Recommended for you" panel. |
+| `Dictionary<string, int>` | `Data/EventCatalogue.cs` | Counts how often each category is searched. | The most-searched category boosts recommendation scores. |
+| `Stack<string>` | `Data/EventCatalogue.cs` | Tracks the ids of recently viewed events. | The "Recently viewed (stack)" panel and "Remove last viewed" button. |
+| `SimplePriorityQueue` (binary heap) | `Data/SimplePriorityQueue.cs` | Orders events by priority then date. | The "Featured" strip shows the top three items from the queue. |
+
+## 6. Recommendation feature
+
+`EventCatalogue.GetRecommendations` analyses the user's search history and current results:
+
+1. It finds the most-searched category from the `Dictionary<string, int>`.
+2. It looks at the most recent search (from the `Queue<SearchRecord>`) for category and date.
+3. It scores every upcoming event that is not already in the current results:
+   - +4 if the event's category matches the most-searched category.
+   - +2 if the event's category matches the last searched category.
+   - +2 if the event's date is within seven days of the last searched date.
+   - +2 if the event has a high priority.
+4. It returns the top three, each with a short reason shown on the card.
+
+## 7. Project structure
 
 ```
 MunicipalServicesApp.sln
@@ -113,15 +163,23 @@ MunicipalServicesApp/
     App.config
     MunicipalServicesApp.csproj
     Program.cs                     entry point, STAThread, starts MainMenuForm
-    Data/IssueStore.cs             List<IssueReport> storage
-    Models/IssueReport.cs          one reported issue
-    Forms/MainMenuForm.cs          main menu, two options disabled
-    Forms/ReportIssuesForm.cs      capture form, validation, attachment, progress bar
-    UI/AppTheme.cs                 shared colours and fonts
+    Data/
+        IssueStore.cs              List<IssueReport> storage for Part 1
+        EventCatalogue.cs          advanced data structures for Part 2 events
+        SimplePriorityQueue.cs     binary-heap priority queue
+    Models/
+        IssueReport.cs             one reported issue
+        LocalEvent.cs              one event or announcement
+    Forms/
+        MainMenuForm.cs            main menu with three options
+        ReportIssuesForm.cs        capture form, validation, attachment, progress bar
+        LocalEventsForm.cs         events search, recommendations, stack, queue
+    UI/
+        AppTheme.cs                shared colours and fonts
     Properties/AssemblyInfo.cs
 ```
 
-## 7. Troubleshooting
+## 8. Troubleshooting
 
 | Problem | Fix |
 |---|---|
@@ -129,3 +187,4 @@ MunicipalServicesApp/
 | The solution opens but nothing builds | Right-click the solution, choose **Restore**, then **Build Solution** |
 | The attach button does nothing | The file dialog was cancelled; click the button again and choose a file |
 | A chosen image shows no preview | The file is a document or is not a readable image; the file name is still attached |
+| Recommendations do not change | Perform a category or date search first; recommendations are based on search history |

@@ -67,12 +67,12 @@ namespace MunicipalServicesApp.Forms
             lblEngagement.Font = AppTheme.BodyFont;
             lblEngagement.ForeColor = AppTheme.BodyText;
 
-            btnAttachFile.BackColor = Color.White;
+            btnAttachFile.BackColor = AppTheme.Card;
             btnAttachFile.ForeColor = AppTheme.BodyText;
             btnAttachFile.Font = AppTheme.ButtonFont;
             btnAttachFile.FlatAppearance.BorderColor = AppTheme.Header;
 
-            btnBackToMenu.BackColor = Color.White;
+            btnBackToMenu.BackColor = AppTheme.Card;
             btnBackToMenu.ForeColor = AppTheme.BodyText;
             btnBackToMenu.Font = AppTheme.ButtonFont;
             btnBackToMenu.FlatAppearance.BorderColor = AppTheme.Header;

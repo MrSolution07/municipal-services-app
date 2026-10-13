@@ -6,7 +6,8 @@ using MunicipalServicesApp.UI;
 namespace MunicipalServicesApp.Forms
 {
     /// <summary>
-    /// Startup form. Presents the three municipal tasks; only "Report Issues" is active in Part 1.
+    /// Startup form. Presents the three municipal tasks; Report Issues and Local Events are
+    /// active in Part 2. Service Request Status remains disabled until Part 3.
     /// </summary>
     public partial class MainMenuForm : Form
     {
@@ -33,11 +34,11 @@ namespace MunicipalServicesApp.Forms
             lblSessionCount.ForeColor = AppTheme.MutedText;
 
             StyleActiveButton(btnReportIssues);
-            StyleDisabledButton(btnLocalEvents);
+            StyleActiveButton(btnLocalEvents);
             StyleDisabledButton(btnServiceStatus);
 
             toolTip.SetToolTip(btnReportIssues, "Report a municipal issue such as a water leak or a pothole.");
-            toolTip.SetToolTip(btnLocalEvents, "This service is added in Part 2 of the project.");
+            toolTip.SetToolTip(btnLocalEvents, "Find upcoming events, announcements and recommendations from the municipality.");
             toolTip.SetToolTip(btnServiceStatus, "This service is added in Part 3 of the project.");
         }
 
@@ -53,7 +54,7 @@ namespace MunicipalServicesApp.Forms
 
         private static void StyleDisabledButton(Button button)
         {
-            button.BackColor = System.Drawing.Color.FromArgb(222, 226, 232);
+            button.BackColor = AppTheme.Disabled;
             button.ForeColor = AppTheme.MutedText;
             button.Font = AppTheme.ButtonFont;
             button.FlatAppearance.BorderSize = 0;
@@ -72,6 +73,16 @@ namespace MunicipalServicesApp.Forms
             using (ReportIssuesForm reportForm = new ReportIssuesForm())
             {
                 reportForm.ShowDialog(this);
+            }
+
+            UpdateSessionCount();
+        }
+
+        private void BtnLocalEvents_Click(object sender, EventArgs e)
+        {
+            using (LocalEventsForm eventsForm = new LocalEventsForm())
+            {
+                eventsForm.ShowDialog(this);
             }
 
             UpdateSessionCount();
