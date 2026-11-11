@@ -303,10 +303,11 @@ namespace MunicipalServicesApp.Forms
             foreach (EventCatalogue.RecommendedEvent rec in EventCatalogue.GetRecommendations(5, viewedIds))
             {
                 EventCatalogue.RecommendedEvent captured = rec;
-                Panel card = BuildCard(300, 106, () => SelectEvent(captured.Event.Id, true),
+                Panel card = BuildCard(300, 124, () => SelectEvent(captured.Event.Id, true),
                     CreateLine(captured.Event.Title, AppTheme.BodyText, AppTheme.SectionFont, 24),
                     CreateLine(captured.Event.DisplayDate, AppTheme.MutedText, AppTheme.SmallFont, 18),
-                    CreateLine("Why: " + captured.Reason, AppTheme.Accent, AppTheme.SmallFont, 34));
+                    CreateLine("Score " + captured.Score, AppTheme.BodyText, AppTheme.SmallFont, 18),
+                    CreateLine("Why: " + captured.Reason, AppTheme.Accent, AppTheme.SmallFont, 36));
                 flpRecommendations.Controls.Add(card);
             }
 
