@@ -30,9 +30,9 @@ namespace MunicipalServicesApp.Data
         // Priority queue for featured events (higher priority, earlier date first).
         private static readonly SimplePriorityQueue FeaturedQueue = new SimplePriorityQueue();
 
-        // Search history queue for recommendation scoring.
+        // Search history queue for recommendation scoring. Recent searches outweigh old ones.
         private static readonly Queue<SearchRecord> SearchHistory = new Queue<SearchRecord>();
-        private static readonly Dictionary<string, int> CategorySearchCounts = new Dictionary<string, int>();
+        private static readonly Dictionary<string, int> ViewPoints = new Dictionary<string, int>();
 
         private static int nextId = 1;
         private const int MaxSearchHistory = 20;
@@ -52,12 +52,12 @@ namespace MunicipalServicesApp.Data
             IsLoaded = true;
         }
 
-        /// <summary>Records a search (Queue of recent searches) and counts category interest (Dictionary).</summary>
+        /// <summary>Records a search. Only the queue is updated. Recent entries outweigh old ones.</summary>
         public static void RecordSearch(string category, DateTime? date)
         {
             if (string.IsNullOrEmpty(category) && !date.HasValue)
             {
-                return; // an empty search says nothing about the user's preferences
+                return;
             }
 
             SearchHistory.Enqueue(new SearchRecord { Category = category, Date = date });
@@ -66,18 +66,6 @@ namespace MunicipalServicesApp.Data
             {
                 SearchHistory.Dequeue();
             }
-
-            if (!string.IsNullOrEmpty(category))
-            {
-                AddInterest(category, 2); // a search is a strong signal
-            }
-        }
-
-        private static void AddInterest(string category, int weight)
-        {
-            int current;
-            CategorySearchCounts.TryGetValue(category, out current);
-            CategorySearchCounts[category] = current + weight;
         }
 
         /// <summary>Announcements still waiting in the queue, front (next to be read) first.</summary>
@@ -129,7 +117,13 @@ namespace MunicipalServicesApp.Data
             if (RecentlyViewed.Count == 0 || RecentlyViewed.Peek() != eventId)
             {
                 RecentlyViewed.Push(eventId);
-                AddInterest(EventsById[eventId].Category, 1);
+                string category = EventsById[eventId].Category;
+                int points;
+                ViewPoints.TryGetValue(category, out points);
+                if (points < 3)
+                {
+                    ViewPoints[category] = points + 1;
+                }
             }
         }
 
@@ -243,30 +237,58 @@ namespace MunicipalServicesApp.Data
         }
 
         /// <summary>
-        /// Recommendation engine. Combines search history (queue + dictionary) with the priority
-        /// queue to suggest related upcoming events.
+        /// Recommendation engine. The last five category searches outweigh older ones.
+        /// Viewed categories add at most 3 points. A date-only search still affects proximity.
         /// </summary>
         public static IEnumerable<RecommendedEvent> GetRecommendations(int count, IEnumerable<string> excludeIds)
         {
             HashSet<string> exclude = new HashSet<string>(excludeIds);
 
-            // Determine the most searched category.
-            string favouriteCategory = null;
-            int bestCount = 0;
-            foreach (KeyValuePair<string, int> pair in CategorySearchCounts)
+            List<SearchRecord> history = new List<SearchRecord>(SearchHistory);
+            Dictionary<string, int> categoryWeights = new Dictionary<string, int>();
+            int used = 0;
+            for (int i = history.Count - 1; i >= 0 && used < 5; i--)
             {
-                if (pair.Value > bestCount)
+                if (string.IsNullOrEmpty(history[i].Category))
                 {
-                    bestCount = pair.Value;
-                    favouriteCategory = pair.Key;
+                    continue;
+                }
+
+                int weight = 5 - used;
+                int current;
+                categoryWeights.TryGetValue(history[i].Category, out current);
+                categoryWeights[history[i].Category] = current + weight;
+                used++;
+            }
+
+            string firstCategory = null;
+            string secondCategory = null;
+            int firstWeight = 0;
+            int secondWeight = 0;
+            foreach (KeyValuePair<string, int> pair in categoryWeights)
+            {
+                if (pair.Value > firstWeight || (pair.Value == firstWeight && string.Compare(pair.Key, firstCategory, StringComparison.Ordinal) < 0))
+                {
+                    secondCategory = firstCategory;
+                    secondWeight = firstWeight;
+                    firstCategory = pair.Key;
+                    firstWeight = pair.Value;
+                }
+                else if (pair.Value > secondWeight || (pair.Value == secondWeight && string.Compare(pair.Key, secondCategory, StringComparison.Ordinal) < 0))
+                {
+                    secondCategory = pair.Key;
+                    secondWeight = pair.Value;
                 }
             }
 
-            // Last search record is used for date proximity.
-            SearchRecord last = null;
-            foreach (SearchRecord record in SearchHistory)
+            SearchRecord dated = null;
+            for (int i = history.Count - 1; i >= 0; i--)
             {
-                last = record;
+                if (history[i].Date.HasValue)
+                {
+                    dated = history[i];
+                    break;
+                }
             }
 
             List<RecommendedEvent> scored = new List<RecommendedEvent>();
@@ -286,25 +308,48 @@ namespace MunicipalServicesApp.Data
                     reasons.Add("Featured by the municipality");
                 }
 
-                if (!string.IsNullOrEmpty(favouriteCategory) && item.Category == favouriteCategory)
+                if (!string.IsNullOrEmpty(firstCategory) && item.Category == firstCategory)
                 {
                     score += 4;
-                    reasons.Add("You often look at " + item.Category);
+                    reasons.Add("Top of your recent searches: " + item.Category);
                 }
-                else if (last != null && !string.IsNullOrEmpty(last.Category) && item.Category == last.Category)
+                else if (!string.IsNullOrEmpty(secondCategory) && item.Category == secondCategory)
                 {
                     score += 2;
-                    reasons.Add("Same category as your last search");
+                    reasons.Add("Second of your recent searches: " + item.Category);
                 }
 
-                if (last != null && last.Date.HasValue)
+                int opened;
+                if (ViewPoints.TryGetValue(item.Category, out opened) && opened > 0)
                 {
-                    double days = Math.Abs((item.EventDate.Date - last.Date.Value.Date).TotalDays);
-                    if (days <= 7)
+                    score += opened;
+                    reasons.Add("You have opened " + opened + " " + item.Category + " events");
+                }
+
+                if (dated != null && dated.Date.HasValue)
+                {
+                    double days = Math.Abs((item.EventDate.Date - dated.Date.Value.Date).TotalDays);
+                    if (days == 0)
+                    {
+                        score += 3;
+                        reasons.Add("On the date you searched");
+                    }
+                    else if (days <= 3)
                     {
                         score += 2;
+                        reasons.Add("Within three days of your searched date");
+                    }
+                    else if (days <= 7)
+                    {
+                        score += 1;
                         reasons.Add("Within a week of your searched date");
                     }
+                }
+
+                if (!item.IsAnnouncement)
+                {
+                    score += 1;
+                    reasons.Add("Upcoming event rather than a notice");
                 }
 
                 if (score > 0)
