@@ -134,15 +134,16 @@ namespace MunicipalServicesApp.Forms
             // btnServiceStatus
             //
             this.btnServiceStatus.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnServiceStatus.Enabled = false;
+            this.btnServiceStatus.Enabled = true;
             this.btnServiceStatus.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnServiceStatus.Location = new System.Drawing.Point(27, 261);
             this.btnServiceStatus.Margin = new System.Windows.Forms.Padding(3, 6, 3, 6);
             this.btnServiceStatus.Name = "btnServiceStatus";
             this.btnServiceStatus.Size = new System.Drawing.Size(650, 88);
             this.btnServiceStatus.TabIndex = 3;
-            this.btnServiceStatus.Text = "3.  Service Request Status  (available later)";
+            this.btnServiceStatus.Text = "3.  Service Request Status";
             this.btnServiceStatus.UseVisualStyleBackColor = true;
+            this.btnServiceStatus.Click += new System.EventHandler(this.BtnServiceStatus_Click);
             //
             // lblSessionCount
             //
