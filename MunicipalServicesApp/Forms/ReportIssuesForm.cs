@@ -33,6 +33,9 @@ namespace MunicipalServicesApp.Forms
 
         private string attachmentPath = string.Empty;
 
+        /// <summary>Set when the resident chooses to open this report in Service Request Status.</summary>
+        public string TrackReference { get; private set; }
+
         public ReportIssuesForm()
         {
             InitializeComponent();
@@ -234,21 +237,32 @@ namespace MunicipalServicesApp.Forms
             };
 
             string reference = IssueStore.Add(report);
+            ServiceRequestStore.AddFromReport(report);
 
             progressReport.Value = 100;
             lblEngagement.Text = "100% complete. Report submitted - thank you for helping your municipality.";
 
-            MessageBox.Show(
+            DialogResult track = MessageBox.Show(
                 this,
                 "Thank you. Your issue has been submitted." + Environment.NewLine + Environment.NewLine +
                 "Reference number: " + reference + Environment.NewLine +
                 "Category: " + report.Category + Environment.NewLine +
-                "Reports captured this session: " + IssueStore.Count,
+                "Reports captured this session: " + IssueStore.Count + Environment.NewLine + Environment.NewLine +
+                "Track this request now?",
                 "Report submitted",
-                MessageBoxButtons.OK,
+                MessageBoxButtons.YesNo,
                 MessageBoxIcon.Information);
 
-            ResetForm();
+            if (track == DialogResult.Yes)
+            {
+                TrackReference = reference;
+                Close();
+            }
+            else
+            {
+                TrackReference = null;
+                ResetForm();
+            }
         }
 
         private bool IsReportValid()
