@@ -6,8 +6,7 @@ using MunicipalServicesApp.UI;
 namespace MunicipalServicesApp.Forms
 {
     /// <summary>
-    /// Startup form. Presents the three municipal tasks; Report Issues and Local Events are
-    /// active in Part 2. Service Request Status remains disabled until Part 3.
+    /// Startup form. Report Issues, Local Events, and Service Request Status are all active.
     /// </summary>
     public partial class MainMenuForm : Form
     {
@@ -35,11 +34,11 @@ namespace MunicipalServicesApp.Forms
 
             StyleActiveButton(btnReportIssues);
             StyleActiveButton(btnLocalEvents);
-            StyleDisabledButton(btnServiceStatus);
+            StyleActiveButton(btnServiceStatus);
 
             toolTip.SetToolTip(btnReportIssues, "Report a municipal issue such as a water leak or a pothole.");
             toolTip.SetToolTip(btnLocalEvents, "Find upcoming events, announcements and recommendations from the municipality.");
-            toolTip.SetToolTip(btnServiceStatus, "This service is added in Part 3 of the project.");
+            toolTip.SetToolTip(btnServiceStatus, "Track a service request by its reference number.");
         }
 
         private static void StyleActiveButton(Button button)
@@ -52,20 +51,12 @@ namespace MunicipalServicesApp.Forms
             button.Padding = new Padding(18, 0, 0, 0);
         }
 
-        private static void StyleDisabledButton(Button button)
-        {
-            button.BackColor = AppTheme.Disabled;
-            button.ForeColor = AppTheme.MutedText;
-            button.Font = AppTheme.ButtonFont;
-            button.FlatAppearance.BorderSize = 0;
-            button.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            button.Padding = new Padding(18, 0, 0, 0);
-        }
-
-        /// <summary>Shows how many reports the List currently holds for this session.</summary>
+        /// <summary>Shows reports captured this session and requests that are not yet resolved.</summary>
         private void UpdateSessionCount()
         {
-            lblSessionCount.Text = "Issues reported this session: " + IssueStore.Count;
+            ServiceRequestStore.Load();
+            lblSessionCount.Text = "Issues reported this session: " + IssueStore.Count
+                + "    Open service requests: " + ServiceRequestStore.OpenCount;
         }
 
         private void BtnReportIssues_Click(object sender, EventArgs e)
@@ -73,6 +64,24 @@ namespace MunicipalServicesApp.Forms
             using (ReportIssuesForm reportForm = new ReportIssuesForm())
             {
                 reportForm.ShowDialog(this);
+                if (!string.IsNullOrEmpty(reportForm.TrackReference))
+                {
+                    using (ServiceRequestForm statusForm = new ServiceRequestForm())
+                    {
+                        statusForm.InitialReference = reportForm.TrackReference;
+                        statusForm.ShowDialog(this);
+                    }
+                }
+            }
+
+            UpdateSessionCount();
+        }
+
+        private void BtnServiceStatus_Click(object sender, EventArgs e)
+        {
+            using (ServiceRequestForm statusForm = new ServiceRequestForm())
+            {
+                statusForm.ShowDialog(this);
             }
 
             UpdateSessionCount();
