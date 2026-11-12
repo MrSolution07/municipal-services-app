@@ -86,5 +86,16 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <!--
+    Visual Studio on ARM looks for the C# compiler one folder too high
+    (Bin\Roslyn instead of Bin\arm64\Roslyn). Point at the file that exists.
+    A normal Visual Studio 2022 install already has Bin\Roslyn, so this changes nothing there.
+  -->
+  <PropertyGroup>
+    <_CSharpTargetsDir Condition="Exists('$(MSBuildToolsPath)\Roslyn\Microsoft.CSharp.Core.targets')">$(MSBuildToolsPath)\Roslyn</_CSharpTargetsDir>
+    <_CSharpTargetsDir Condition="'$(_CSharpTargetsDir)' == '' and Exists('$(MSBuildToolsPath)\..\Roslyn\Microsoft.CSharp.Core.targets')">$(MSBuildToolsPath)\..\Roslyn</_CSharpTargetsDir>
+    <RoslynTargetsPath Condition="'$(_CSharpTargetsDir)' != ''">$(_CSharpTargetsDir)</RoslynTargetsPath>
+    <CSharpCoreTargetsPath Condition="'$(_CSharpTargetsDir)' != ''">$(_CSharpTargetsDir)\Microsoft.CSharp.Core.targets</CSharpCoreTargetsPath>
+  </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
