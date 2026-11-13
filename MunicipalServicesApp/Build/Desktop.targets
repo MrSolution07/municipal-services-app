@@ -45,6 +45,39 @@
 
   <Import Project="$(MSBuildThisFileDirectory)..\Compiler\tasks\net472\Microsoft.CSharp.Core.targets" />
 
+  <!-- Microsoft.Common.targets calls this. It normally lives in Microsoft.CSharp.targets. -->
+  <PropertyGroup>
+    <CreateManifestResourceNamesDependsOn></CreateManifestResourceNamesDependsOn>
+  </PropertyGroup>
+  <Target Name="CreateManifestResourceNames"
+          Condition="'@(EmbeddedResource)' != ''"
+          DependsOnTargets="$(CreateManifestResourceNamesDependsOn)">
+    <ItemGroup>
+      <_Temporary Remove="@(_Temporary)" />
+    </ItemGroup>
+    <CreateCSharpManifestResourceName
+          ResourceFiles="@(EmbeddedResource)"
+          RootNamespace="$(RootNamespace)"
+          EnableCustomCulture="$(EnableCustomCulture)"
+          UseDependentUponConvention="$(EmbeddedResourceUseDependentUponConvention)"
+          Condition="'%(EmbeddedResource.ManifestResourceName)' == '' and ('%(EmbeddedResource.WithCulture)' == 'false' or '%(EmbeddedResource.Type)' == 'Resx')">
+      <Output TaskParameter="ResourceFilesWithManifestResourceNames" ItemName="_Temporary" />
+    </CreateCSharpManifestResourceName>
+    <CreateCSharpManifestResourceName
+          ResourceFiles="@(EmbeddedResource)"
+          RootNamespace="$(RootNamespace)"
+          PrependCultureAsDirectory="false"
+          UseDependentUponConvention="$(EmbeddedResourceUseDependentUponConvention)"
+          Condition="'%(EmbeddedResource.ManifestResourceName)' == '' and '%(EmbeddedResource.WithCulture)' == 'true' and '%(EmbeddedResource.Type)' == 'Non-Resx'">
+      <Output TaskParameter="ResourceFilesWithManifestResourceNames" ItemName="_Temporary" />
+    </CreateCSharpManifestResourceName>
+    <ItemGroup>
+      <EmbeddedResource Remove="@(EmbeddedResource)" Condition="'%(EmbeddedResource.ManifestResourceName)' == ''" />
+      <EmbeddedResource Include="@(_Temporary)" />
+      <_Temporary Remove="@(_Temporary)" />
+    </ItemGroup>
+  </Target>
+
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\Managed\Microsoft.CSharp.DesignTime.targets"
           Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\Managed\Microsoft.CSharp.DesignTime.targets')" />
 
