@@ -86,9 +86,5 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <!--
-    Desktop.targets builds this WinForms app without Microsoft.CSharp.targets.
-    Visual Studio 2026 on ARM fails the project load while importing that file.
-  -->
-  <Import Project="$(MSBuildThisFileDirectory)Build\Desktop.targets" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
