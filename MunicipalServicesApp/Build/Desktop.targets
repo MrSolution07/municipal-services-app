@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--
+    Do not import $(MSBuildToolsPath)\Microsoft.CSharp.targets.
+    Visual Studio 2026 on ARM loads
+    Bin\arm64\Microsoft.CSharp.CurrentVersion.targets, and that file imports
+    Bin\Roslyn\Microsoft.CSharp.Core.targets, which this install does not have.
+    The project then fails to load before any property set in the csproj can help.
+    Microsoft.Common.targets is the same WinForms build used by a normal project.
+    The C# compiler itself is the copy in Compiler\tasks\net472.
+  -->
+  <PropertyGroup>
+    <_BundledCompilerDir>$(MSBuildThisFileDirectory)..\Compiler\tasks\net472\</_BundledCompilerDir>
+    <CscToolPath>$(_BundledCompilerDir)</CscToolPath>
+    <CscToolExe>csc.exe</CscToolExe>
+    <UseSharedCompilation>false</UseSharedCompilation>
+    <UseHostCompilerIfAvailable>false</UseHostCompilerIfAvailable>
+  </PropertyGroup>
+
+  <UsingTask TaskName="Microsoft.CodeAnalysis.BuildTasks.Csc"
+             AssemblyFile="$(_BundledCompilerDir)Microsoft.Build.Tasks.CodeAnalysis.dll" />
+  <UsingTask TaskName="Microsoft.CodeAnalysis.BuildTasks.CopyRefAssembly"
+             AssemblyFile="$(_BundledCompilerDir)Microsoft.Build.Tasks.CodeAnalysis.dll" />
+
+  <Import Project="$(_BundledCompilerDir)Microsoft.CSharp.Core.targets" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+</Project>

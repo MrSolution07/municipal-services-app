@@ -15,7 +15,7 @@ Storage is in memory, so data is cleared when the application closes.
 | Item | Version |
 |---|---|
 | Operating system | Windows 10 or Windows 11 (a Windows virtual machine is fine) |
-| IDE | Visual Studio 2022 (Community is enough) |
+| IDE | Visual Studio 2022 or Visual Studio 2026 (Community is enough) |
 | Visual Studio workload | .NET desktop development |
 | Target framework | .NET Framework 4.8 |
 | Language version | C# 7.3 |
@@ -27,7 +27,7 @@ under **Individual components → .NET Framework 4.8 SDK / targeting pack**.
 ## 2. How to compile
 
 1. Copy the project folder to the Windows machine.
-2. Double-click `MunicipalServicesApp.sln` to open it in Visual Studio 2022.
+2. Double-click `MunicipalServicesApp.sln` to open it in Visual Studio 2022 or Visual Studio 2026.
 3. Make sure the configuration is **Debug** and the platform is **Any CPU**.
 4. Choose **Build → Build Solution** (`Ctrl+Shift+B`).
    The build output appears in `MunicipalServicesApp\bin\Debug\MunicipalServicesApp.exe`.
@@ -246,6 +246,7 @@ MunicipalServicesApp/
 | Problem | Fix |
 |---|---|
 | "The target framework 4.8 is not installed" | Install the .NET Framework 4.8 targeting pack from the Visual Studio Installer |
+| `Microsoft.CSharp.Core.targets` was not found | Close Visual Studio. Open the copy that contains `MunicipalServicesApp\Build\Desktop.targets`. An older download still imports the missing Visual Studio file. |
 | The solution opens but nothing builds | Right-click the solution, choose **Restore**, then **Build Solution** |
 | The attach button does nothing | The file dialog was cancelled; click the button again and choose a file |
 | A chosen image shows no preview | The file is a document or is not a readable image; the file name is still attached |

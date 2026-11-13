@@ -87,13 +87,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <!--
-    Use the C# compiler shipped in Compiler\. Visual Studio 2026 on ARM does not
-    install Microsoft.CSharp.Core.targets where its build system looks.
-    Visual Studio 2022 keeps working because this path is set before that lookup.
+    Desktop.targets builds this WinForms app without Microsoft.CSharp.targets.
+    Visual Studio 2026 on ARM fails the project load while importing that file.
   -->
-  <PropertyGroup>
-    <UseSharedCompilation>false</UseSharedCompilation>
-  </PropertyGroup>
-  <Import Project="$(MSBuildThisFileDirectory)Compiler\build\Microsoft.Net.Compilers.Toolset.props" />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)Build\Desktop.targets" />
 </Project>
