@@ -87,15 +87,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <!--
-    Visual Studio on ARM looks for the C# compiler one folder too high
-    (Bin\Roslyn instead of Bin\arm64\Roslyn). Point at the file that exists.
-    A normal Visual Studio 2022 install already has Bin\Roslyn, so this changes nothing there.
+    Use the C# compiler shipped in Compiler\. Visual Studio 2026 on ARM does not
+    install Microsoft.CSharp.Core.targets where its build system looks.
+    Visual Studio 2022 keeps working because this path is set before that lookup.
   -->
   <PropertyGroup>
-    <_CSharpTargetsDir Condition="Exists('$(MSBuildToolsPath)\Roslyn\Microsoft.CSharp.Core.targets')">$(MSBuildToolsPath)\Roslyn</_CSharpTargetsDir>
-    <_CSharpTargetsDir Condition="'$(_CSharpTargetsDir)' == '' and Exists('$(MSBuildToolsPath)\..\Roslyn\Microsoft.CSharp.Core.targets')">$(MSBuildToolsPath)\..\Roslyn</_CSharpTargetsDir>
-    <RoslynTargetsPath Condition="'$(_CSharpTargetsDir)' != ''">$(_CSharpTargetsDir)</RoslynTargetsPath>
-    <CSharpCoreTargetsPath Condition="'$(_CSharpTargetsDir)' != ''">$(_CSharpTargetsDir)\Microsoft.CSharp.Core.targets</CSharpCoreTargetsPath>
+    <UseSharedCompilation>false</UseSharedCompilation>
   </PropertyGroup>
+  <Import Project="$(MSBuildThisFileDirectory)Compiler\build\Microsoft.Net.Compilers.Toolset.props" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

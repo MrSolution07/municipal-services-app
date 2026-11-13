@@ -1,0 +1,23 @@
+﻿<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+  <!--
+    Always use the compiler stored next to this project.
+    Visual Studio 2019, 2022, and 2026 then compile the same way,
+    including Visual Studio 2026 on ARM where its own Roslyn folder is missing.
+  -->
+  <PropertyGroup>
+    <_RoslynTasksDirectory>$(MSBuildThisFileDirectory)..\tasks\net472\</_RoslynTasksDirectory>
+    <RoslynTasksAssembly>$(_RoslynTasksDirectory)Microsoft.Build.Tasks.CodeAnalysis.dll</RoslynTasksAssembly>
+    <RoslynTargetsPath>$(_RoslynTasksDirectory)</RoslynTargetsPath>
+    <CSharpCoreTargetsPath>$(_RoslynTasksDirectory)Microsoft.CSharp.Core.targets</CSharpCoreTargetsPath>
+    <VisualBasicCoreTargetsPath>$(_RoslynTasksDirectory)Microsoft.VisualBasic.Core.targets</VisualBasicCoreTargetsPath>
+    <CscToolPath>$(_RoslynTasksDirectory)</CscToolPath>
+    <CscToolExe>csc.exe</CscToolExe>
+    <UseSharedCompilation>false</UseSharedCompilation>
+    <UseHostCompilerIfAvailable>false</UseHostCompilerIfAvailable>
+  </PropertyGroup>
+
+  <UsingTask TaskName="Microsoft.CodeAnalysis.BuildTasks.Csc" AssemblyFile="$(RoslynTasksAssembly)" />
+  <UsingTask TaskName="Microsoft.CodeAnalysis.BuildTasks.Vbc" AssemblyFile="$(RoslynTasksAssembly)" />
+  <UsingTask TaskName="Microsoft.CodeAnalysis.BuildTasks.CopyRefAssembly" AssemblyFile="$(RoslynTasksAssembly)" />
+</Project>
