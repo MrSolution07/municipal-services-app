@@ -246,7 +246,7 @@ MunicipalServicesApp/
 | Problem | Fix |
 |---|---|
 | "The target framework 4.8 is not installed" | Install the .NET Framework 4.8 targeting pack from the Visual Studio Installer |
-| `Microsoft.CSharp.Core.targets` was not found | Close Visual Studio. Open the copy that contains `MunicipalServicesApp\Build\Desktop.targets`. An older download still imports the missing Visual Studio file. |
+| `Microsoft.CSharp.Core.targets` was not found, or the Visual C# language service could not be created | Close Visual Studio. Download the project again and open the new folder. The project file must import `MunicipalServicesApp\Build\Desktop.targets`. |
 | The solution opens but nothing builds | Right-click the solution, choose **Restore**, then **Build Solution** |
 | The attach button does nothing | The file dialog was cancelled; click the button again and choose a file |
 | A chosen image shows no preview | The file is a document or is not a readable image; the file name is still attached |

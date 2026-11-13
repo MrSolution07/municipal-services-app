@@ -1,15 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!--
-    Do not import $(MSBuildToolsPath)\Microsoft.CSharp.targets.
-    Visual Studio 2026 on ARM loads
-    Bin\arm64\Microsoft.CSharp.CurrentVersion.targets, and that file imports
-    Bin\Roslyn\Microsoft.CSharp.Core.targets, which this install does not have.
-    The project then fails to load before any property set in the csproj can help.
-    Microsoft.Common.targets is the same WinForms build used by a normal project.
-    The C# compiler itself is the copy in Compiler\tasks\net472.
+    Same C# project identity as Microsoft.CSharp.targets, without importing that file.
+    Visual Studio 2026 on ARM imports Bin\Roslyn\Microsoft.CSharp.Core.targets from it,
+    and that file is not installed. The compiler used here is Compiler\tasks\net472.
   -->
   <PropertyGroup>
+    <DefaultLanguageSourceExtension>.cs</DefaultLanguageSourceExtension>
+    <Language>C#</Language>
+    <LanguageServiceName Condition="'$(LanguageServiceName)' == ''">C#</LanguageServiceName>
+    <LanguageServiceId Condition="'$(LanguageServiceId)' == ''">{694DD9B6-B865-4C5B-AD85-86356E9C88DC}</LanguageServiceId>
+    <TargetRuntime>Managed</TargetRuntime>
+    <AlwaysUseNumericalSuffixInItemNames>true</AlwaysUseNumericalSuffixInItemNames>
+    <DefineCommonItemSchemas Condition="'$(DefineCommonItemSchemas)' == ''">true</DefineCommonItemSchemas>
+    <DefineCommonReferenceSchemas Condition="'$(DefineCommonReferenceSchemas)' == ''">true</DefineCommonReferenceSchemas>
+    <DefineCommonCapabilities Condition="'$(DefineCommonCapabilities)' == ''">true</DefineCommonCapabilities>
+    <DefaultProjectTypeGuid Condition="'$(DefaultProjectTypeGuid)' == ''">{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</DefaultProjectTypeGuid>
+    <AppDesignerFolder Condition="'$(AppDesignerFolder)' == ''">Properties</AppDesignerFolder>
+    <Utf8Output Condition="'$(Utf8Output)' == ''">true</Utf8Output>
+    <NoCompilerStandardLib Condition="'$(NoCompilerStandardLib)' == ''">true</NoCompilerStandardLib>
+    <ErrorEndLocation Condition="'$(BuildingInsideVisualStudio)' == 'true' and '$(ErrorEndLocation)' == ''">true</ErrorEndLocation>
+
     <_BundledCompilerDir>$(MSBuildThisFileDirectory)..\Compiler\tasks\net472\</_BundledCompilerDir>
     <CscToolPath>$(_BundledCompilerDir)</CscToolPath>
     <CscToolExe>csc.exe</CscToolExe>
@@ -17,11 +28,28 @@
     <UseHostCompilerIfAvailable>false</UseHostCompilerIfAvailable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectCapability Include="CSharp;Managed" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(DefineCommonCapabilities)' == 'true'">
+    <ProjectCapability Include="ReferencesFolder;LanguageService" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(NoCompilerStandardLib)' == 'true' and '$(NoStdLib)' != 'true'">
+    <_ExplicitReference Include="$(FrameworkPathOverride)\mscorlib.dll" />
+  </ItemGroup>
+
   <UsingTask TaskName="Microsoft.CodeAnalysis.BuildTasks.Csc"
              AssemblyFile="$(_BundledCompilerDir)Microsoft.Build.Tasks.CodeAnalysis.dll" />
   <UsingTask TaskName="Microsoft.CodeAnalysis.BuildTasks.CopyRefAssembly"
              AssemblyFile="$(_BundledCompilerDir)Microsoft.Build.Tasks.CodeAnalysis.dll" />
 
-  <Import Project="$(_BundledCompilerDir)Microsoft.CSharp.Core.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)..\Compiler\tasks\net472\Microsoft.CSharp.Core.targets" />
+
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\Managed\Microsoft.CSharp.DesignTime.targets"
+          Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\Managed\Microsoft.CSharp.DesignTime.targets')" />
+
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+
+  <Import Project="$([MSBuild]::GetToolsDirectory32())\..\..\..\Common7\IDE\CommonExtensions\Microsoft\ProjectServices\Microsoft.DesignTime.targets"
+          Condition="'$(MSBuildRuntimeType)' == 'Full' and Exists('$([MSBuild]::GetToolsDirectory32())\..\..\..\Common7\IDE\CommonExtensions\Microsoft\ProjectServices\Microsoft.DesignTime.targets')" />
 </Project>
