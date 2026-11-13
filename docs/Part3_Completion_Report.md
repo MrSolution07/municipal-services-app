@@ -28,11 +28,9 @@ Part 3. The hard part was keeping several structures in step when a status chang
 
 ## Key learnings
 
-The useful lesson was to give every structure one job that the user can see. A tree that is only constructed in code is hard to mark and easy to get wrong. The height line, the urgency list, the heap card, the two walks, and the route are each tied to one structure.
+I learned that a data structure has to do one visible job, or I cannot tell whether it works. On the status page, Find shows the binary search path, the height line shows why the AVL tree is used, By urgency shows the red-black order, Next urgent shows the heap, and the crew route shows Prim's algorithm. If one of those panels is wrong, I know which structure to fix.
 
-Rebuilding a small tree is simpler than deleting from it, and it is still O(n log n). Saying that in the readme is more honest than shipping a delete that only works on the seed.
-
-[Write this paragraph in your own words before you submit. Say which skill, problem, or technique you will keep using, and why.]
+I also learned to keep a status change in one method. SetStatus updates the request, then rebuilds the trees, the heap, the graph, and the route together. With only twelve requests, rebuilding is fast enough, and the screen cannot show a heap that still contains a request I have already assigned.
 
 ## Technology recommendations
 
